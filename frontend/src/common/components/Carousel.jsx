@@ -12,11 +12,53 @@ const phases = {
   VIDEO: "VIDEO",
 };
 
+function YouTubeEmbed({ youtubeId, isActive }) {
+  if (!isActive) return null;
+
+  const src = [
+    `https://www.youtube.com/embed/${youtubeId}?`,
+    "autoplay=1",
+    "mute=1",
+    "controls=0",
+    "showinfo=0",
+    "modestbranding=1",
+    "rel=0",
+    "iv_load_policy=3",
+    "disablekb=1",
+    "fs=0",
+    "playsinline=1",
+    "loop=0",
+    "start=3",
+    `enablejsapi=1`,
+  ].join("&");
+
+  // Slight up-scale to mimic object-cover for 16:9 content in any viewport
+  const scalePercent = 125;
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <iframe
+        src={src}
+        title="Movie trailer"
+        allow="autoplay; encrypted-media; accelerometer; gyroscope"
+        allowFullScreen={false}
+        frameBorder="0"
+        className="absolute top-1/2 left-1/2
+          -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        style={{
+          border: "none",
+          width: `${scalePercent}%`,
+          height: `${scalePercent}%`,
+        }}
+      />
+    </div>
+  );
+}
+
 export default function Carousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [phase, setPhase] = useState(phases.POSTER);
   const [direction, setDirection] = useState(1);
-  const videoRef = useRef(null);
   const timerRef = useRef(null);
   const manualRef = useRef(false);
 
@@ -74,10 +116,6 @@ export default function Carousel() {
     }
 
     if (phase === phases.VIDEO) {
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.play().catch(() => {});
-      }
       timerRef.current = setTimeout(() => {
         advanceToNext();
       }, VIDEO_DURATION_MS);
@@ -86,7 +124,7 @@ export default function Carousel() {
     return clearTimers;
   }, [phase, clearTimers, advanceToNext]);
 
-  // Reset phase when slide changes via manual nav
+  // Reset manual flag
   useEffect(() => {
     if (manualRef.current) {
       manualRef.current = false;
@@ -104,7 +142,6 @@ export default function Carousel() {
   const isVideoPhase =
     phase === phases.VIDEO || phase === phases.TRANSITIONING;
 
-  // Slide animation variants
   const slideVariants = {
     enter: (d) => ({
       x: d > 0 ? "100%" : "-100%",
@@ -131,10 +168,13 @@ export default function Carousel() {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: TRANSITION_DURATION, ease: "easeInOut" }}
+          transition={{
+            duration: TRANSITION_DURATION,
+            ease: "easeInOut",
+          }}
           className="absolute inset-0 w-full h-full"
         >
-          {/* Poster background */}
+          {/* ── Poster background ── */}
           <motion.div
             className="absolute inset-0 w-full h-full"
             animate={{ opacity: isVideoPhase ? 0 : 1 }}
@@ -148,29 +188,22 @@ export default function Carousel() {
             />
           </motion.div>
 
-          {/* Video background */}
+          {/* ── YouTube video background ── */}
           <motion.div
             className="absolute inset-0 w-full h-full"
             animate={{ opacity: isVideoPhase ? 1 : 0 }}
             transition={{ duration: 1.5, ease: "easeInOut" }}
           >
-            <video
-              ref={videoRef}
-              src={movie.video}
-              muted
-              playsInline
-              preload="auto"
-              className="w-full h-full object-cover"
+            <YouTubeEmbed
+              youtubeId={movie.youtubeId}
+              isActive={isVideoPhase}
             />
           </motion.div>
 
-
-          {/* Bottom gradient – strong cinematic depth */}
-          <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 via-30% to-transparent pointer-events-none" />
-          {/* Left side gradient for text readability */}
-          <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/30 via-40% to-transparent pointer-events-none" />
-          {/* Subtle top vignette */}
-          <div className="absolute inset-0 bg-linear-to-b from-black/40 to-transparent to-30% pointer-events-none" />
+          {/* ── Gradient overlays ── */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 via-30% to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 via-40% to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent to-30% pointer-events-none" />
 
           {/* ── Content Overlay ── */}
           <div className="absolute inset-0 flex items-end pb-24 sm:pb-28 md:pb-32 lg:pb-36 px-6 sm:px-10 md:px-16 lg:px-20">
@@ -179,17 +212,15 @@ export default function Carousel() {
               <motion.h1
                 layout
                 animate={{
-                  fontSize: showOverlayDetails ? undefined : undefined,
                   scale: showOverlayDetails ? 1 : 1.15,
                   y: showOverlayDetails ? 0 : 20,
                 }}
-                transition={{
-                  duration: 1,
-                  ease: "easeInOut",
-                }}
+                transition={{ duration: 1, ease: "easeInOut" }}
                 className="text-white font-bold leading-tight origin-bottom-left
                   text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
-                style={{ textShadow: "0 4px 30px rgba(0,0,0,0.7)" }}
+                style={{
+                  textShadow: "0 4px 30px rgba(0,0,0,0.7)",
+                }}
               >
                 {movie.title}
               </motion.h1>
@@ -233,7 +264,9 @@ export default function Carousel() {
                     }}
                     className="text-white/80 mt-3 sm:mt-4 leading-relaxed
                       text-sm sm:text-base md:text-lg max-w-xl"
-                    style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
+                    style={{
+                      textShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    }}
                   >
                     {movie.description}
                   </motion.p>
@@ -264,7 +297,7 @@ export default function Carousel() {
         </motion.div>
       </AnimatePresence>
 
-      {/* ── Navigation Arrows ── */}
+      {/* ── Previous Arrow ── */}
       <button
         onClick={goPrev}
         aria-label="Previous movie"
@@ -289,6 +322,7 @@ export default function Carousel() {
         </svg>
       </button>
 
+      {/* ── Next Arrow ── */}
       <button
         onClick={goNext}
         aria-label="Next movie"
@@ -331,7 +365,6 @@ export default function Carousel() {
                   i === currentIndex ? "bg-white" : "bg-white/40"
                 }`}
               />
-              {/* Progress fill for active dot during video phase */}
               {i === currentIndex && phase === phases.VIDEO && (
                 <motion.div
                   className="absolute inset-0 rounded-full bg-white/60"
