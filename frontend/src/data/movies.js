@@ -1,10 +1,3 @@
-/**
- * Replace poster URLs with actual movie poster images
- * and video URLs with movie trailer/clip MP4s.
- *
- * Unsplash images and Google-hosted sample videos
- * are used here as working placeholders.
- */
 const MOVIES = [
   {
     id: 1,
@@ -14,9 +7,8 @@ const MOVIES = [
       "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
     release: "In theaters",
     poster:
-      "https://i.pinimg.com/1200x/19/d7/e0/19d7e064607c2d9da61fd20e542b7dde.jpg",
-    video:
-      "https://www.youtube.com/embed/Way9Dexny3w",
+      "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1920&q=80&fit=crop",
+    youtubeId: "U2Qp5pL3ovA",
   },
   {
     id: 2,
@@ -27,8 +19,7 @@ const MOVIES = [
     release: "In theaters",
     poster:
       "https://images.unsplash.com/photo-1534088568595-a066f410bcda?w=1920&q=80&fit=crop",
-    video:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    youtubeId: "uYPbbksJxIg",
   },
   {
     id: 3,
@@ -39,8 +30,7 @@ const MOVIES = [
     release: "Streaming now",
     poster:
       "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=1920&q=80&fit=crop",
-    video:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    youtubeId: "mqqft2x_Aa4",
   },
   {
     id: 4,
@@ -51,8 +41,7 @@ const MOVIES = [
     release: "Streaming now",
     poster:
       "https://images.unsplash.com/photo-1462332420958-a05d1e002413?w=1920&q=80&fit=crop",
-    video:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    youtubeId: "zSWdZVtXT7E",
   },
   {
     id: 5,
@@ -63,8 +52,7 @@ const MOVIES = [
     release: "Streaming now",
     poster:
       "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1920&q=80&fit=crop",
-    video:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    youtubeId: "gCcx85e7-sM",
   },
   {
     id: 6,
@@ -75,8 +63,7 @@ const MOVIES = [
     release: "Streaming now",
     poster:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80&fit=crop",
-    video:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
+    youtubeId: "tFMo3UJ4B4g",
   },
 ];
 
