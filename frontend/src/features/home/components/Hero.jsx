@@ -1,8 +1,11 @@
 import React from 'react'
+import Carousel from '../../../common/components/Carousel'
 
 function Hero() {
   return (
-    <div>Hero</div>
+    <section className='relative w-full h-screen'>
+      <Carousel />
+    </section>
   )
 }
 
