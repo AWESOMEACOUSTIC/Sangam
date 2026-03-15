@@ -13,4 +13,14 @@
 body{
   color: white;
   background-color: #09090B;
+  overflow-x: hidden;
+}
+
+/* Hide video controls & scrollbar */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
