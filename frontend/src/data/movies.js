@@ -14,9 +14,9 @@ const MOVIES = [
       "Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.",
     release: "In theaters",
     poster:
-      "https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1920&q=80&fit=crop",
+      "https://i.pinimg.com/1200x/19/d7/e0/19d7e064607c2d9da61fd20e542b7dde.jpg",
     video:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "https://www.youtube.com/embed/Way9Dexny3w",
   },
   {
     id: 2,

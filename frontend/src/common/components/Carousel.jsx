@@ -164,6 +164,7 @@ export default function Carousel() {
             />
           </motion.div>
 
+
           {/* Bottom gradient – strong cinematic depth */}
           <div className="absolute inset-0 bg-linear-to-t from-black via-black/70 via-30% to-transparent pointer-events-none" />
           {/* Left side gradient for text readability */}
