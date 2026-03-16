@@ -94,7 +94,7 @@ function WatchlistButton({ added, onToggle }) {
   );
 }
 
-export default function MovieCard({ movie, onWatchTrailer, isDragging }) {
+export default function MovieCard({ movie, onWatchTrailer, isDragging, variants }) {
   const [imgError, setImgError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [inWatchlist, setInWatchlist] = useState(false);
@@ -106,6 +106,7 @@ export default function MovieCard({ movie, onWatchTrailer, isDragging }) {
 
   return (
     <motion.div
+      variants={variants}
       className="relative shrink-0 w-44 sm:w-48 md:w-52
                  bg-zinc-900 rounded-2xl overflow-hidden
                  ring-1 ring-white/5 cursor-pointer select-none"

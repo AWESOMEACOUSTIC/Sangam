@@ -32,13 +32,14 @@ export default function TrailerModal({ movie, onClose }) {
   );
 
   useEffect(() => {
+    if (!movie) return undefined;
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [handleKeyDown]);
+  }, [handleKeyDown, movie]);
 
   
   return (
@@ -73,7 +74,8 @@ export default function TrailerModal({ movie, onClose }) {
                   {movie.title}
                 </h2>
                 <p className="text-zinc-400 text-sm mt-0.5">
-                  {movie.year} &bull; {movie.genre.join(" / ")}
+                  {movie.release ?? ""}
+                  {movie.genres?.length ? ` • ${movie.genres.join(" / ")}` : ""}
                 </p>
               </div>
               <motion.button
