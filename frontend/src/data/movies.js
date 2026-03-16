@@ -65,6 +65,117 @@ const MOVIES = [
       "https://i.pinimg.com/736x/01/c2/4c/01c24c9c59f49a895d8979ff02e6342b.jpg",
     youtubeId: "g4Hbz2jLxvQ",
   },
+
+  {
+    id: 7,
+    title: "The Wolf of Wall Street",
+    genres: ["Crime", "Comedy"],
+    description:
+      "A stockbroker rises to extreme wealth and corruption on Wall Street.",
+    release: "2013",
+    poster:
+      "https://image.tmdb.org/t/p/w500/34m2tygAYBGqA9MXKhRDtzObOgb.jpg",
+    youtubeId: "iszwuX1AK6A",
+  },
+  {
+    id: 8,
+    title: "Interstellar",
+    genres: ["Sci-Fi", "Adventure"],
+    description:
+      "Explorers travel through a wormhole in search of a new home for humanity.",
+    release: "2014",
+    poster:
+      "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    youtubeId: "zSWdZVtXT7E",
+  },
+  {
+    id: 9,
+    title: "Anyone But You",
+    genres: ["Romance", "Comedy"],
+    description:
+      "Two rivals pretend to be a couple at a wedding but their fake relationship becomes complicated.",
+    release: "2023",
+    poster:
+      "https://image.tmdb.org/t/p/w500/lurEK87kukWNaHd0zYnsi3yzJrs.jpg",
+    youtubeId: "bMNPn2HI7rE",
+  },
+  {
+    id: 10,
+    title: "Inception",
+    genres: ["Sci-Fi", "Adventure"],
+    description:
+      "A thief who steals secrets through dream-sharing technology is given an impossible mission.",
+    release: "2010",
+    poster:
+      "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
+    youtubeId: "YoHD9XEInc0",
+  },
+  {
+    id: 11,
+    title: "Poor Things",
+    genres: ["Comedy", "Sci-Fi"],
+    description:
+      "A woman resurrected by an eccentric scientist explores the world with childlike curiosity.",
+    release: "2023",
+    poster:
+      "https://image.tmdb.org/t/p/w500/kCGlIMHnOm8JPXIf5p7oPxs5vAA.jpg",
+    youtubeId: "RlbR5N6veqw",
+  },
+  {
+    id: 12,
+    title: "10 Things I Hate About You",
+    genres: ["Romance", "Comedy"],
+    description:
+      "A high school romance unfolds through a clever dating scheme.",
+    release: "1999",
+    poster:
+      "https://image.tmdb.org/t/p/w500/s1FhMAr91WL8LuGZAFnCRHXHCSC.jpg",
+    youtubeId: "HBsOt21NWEI",
+  },
+  {
+    id: 13,
+    title: "Breaking Bad",
+    genres: ["Crime", "Drama"],
+    description:
+      "A chemistry teacher turns to making meth after being diagnosed with cancer.",
+    release: "2008",
+    poster:
+      "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
+    youtubeId: "HhesaQXLuRY",
+  },
+  {
+    id: 14,
+    title: "Stranger Things",
+    genres: ["Sci-Fi", "Horror"],
+    description:
+      "Kids uncover supernatural forces and secret experiments in their town.",
+    release: "2016",
+    poster:
+      "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
+    youtubeId: "b9EkMc79ZSU",
+  },
+  {
+    id: 15,
+    title: "The Last of Us",
+    genres: ["Drama", "Sci-Fi"],
+    description:
+      "A hardened survivor escorts a girl across a post-apocalyptic America.",
+    release: "2023",
+    poster:
+      "https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg",
+    youtubeId: "uLtkt8BonwM",
+  },
+  {
+    id: 16,
+    title: "Severance",
+    genres: ["Sci-Fi", "Thriller"],
+    description:
+      "Employees undergo a procedure separating work memories from personal life.",
+    release: "2022",
+    poster:
+      "https://image.tmdb.org/t/p/w500/lNqT4Y3fCdwKqHc36u0nNzM5GhF.jpg",
+    youtubeId: "xEQP4VVuyrY",
+  },
 ];
 
 export default MOVIES;
