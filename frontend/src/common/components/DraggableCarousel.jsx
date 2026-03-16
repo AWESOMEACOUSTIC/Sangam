@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Children, cloneElement, isValidElement } from "react";
 import { motion, useMotionValue, useAnimation } from "framer-motion";
 
 export default function DraggableCarousel({ children, gap = "gap-4" }) {
@@ -83,19 +83,15 @@ export default function DraggableCarousel({ children, gap = "gap-4" }) {
         className={`flex ${gap} w-max py-4`}
         whileTap={{ cursor: "grabbing" }}
       >
-        {/* Inject isDragging into each child */}
-        {Array.isArray(children)
-          ? children.map((child, i) => {
-              if (!child) return null;
-              return (
-                <div key={child.key ?? i} className="flex-shrink-0">
-                  {typeof child.type === "function"
-                    ? { ...child, props: { ...child.props, isDragging } }
-                    : child}
-                </div>
-              );
-            })
-          : children}
+        {/* Inject isDragging into each child safely */}
+        {Children.map(children, (child, i) => {
+          if (!isValidElement(child)) return null;
+          return (
+            <div key={child.key ?? i} className="flex-shrink-0">
+              {cloneElement(child, { isDragging })}
+            </div>
+          );
+        })}
       </motion.div>
     </div>
   );
