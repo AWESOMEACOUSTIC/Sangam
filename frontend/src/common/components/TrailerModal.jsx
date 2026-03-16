@@ -110,7 +110,7 @@ export default function TrailerModal({ movie, onClose }) {
             >
               <iframe
                 className="absolute inset-0 w-full h-full"
-                src={`https://www.youtube.com/embed/${movie.trailerId}?autoplay=1&rel=0&modestbranding=1`}
+                src={`https://www.youtube.com/embed/${movie.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
                 title={`${movie.title} — Official Trailer`}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write;
