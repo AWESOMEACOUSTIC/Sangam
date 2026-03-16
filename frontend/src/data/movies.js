@@ -1,6 +1,7 @@
 const MOVIES = [
   {
     id: 1,
+    type: "movie",
     title: "Dune: Part Two",
     genres: ["Action", "Adventure", "Drama"],
     description:
@@ -13,6 +14,7 @@ const MOVIES = [
   },
   {
     id: 2,
+    type: "movie",
     title: "Oppenheimer",
     genres: ["Biography", "Drama", "History"],
     description:
@@ -25,6 +27,7 @@ const MOVIES = [
   },
   {
     id: 3,
+    type: "movie",
     title: "The Batman",
     genres: ["Action", "Crime", "Drama"],
     description:
@@ -37,6 +40,7 @@ const MOVIES = [
   },
   {
     id: 4,
+    type: "movie",
     title: "Interstellar",
     genres: ["Adventure", "Drama", "Sci-Fi"],
     description:
@@ -49,6 +53,7 @@ const MOVIES = [
   },
   {
     id: 5,
+    type: "movie",
     title: "Blade Runner 2049",
     genres: ["Action", "Drama", "Sci-Fi"],
     description:
@@ -61,6 +66,7 @@ const MOVIES = [
   },
   {
     id: 6,
+    type: "movie",
     title: "Into The Spider-Verse",
     genres: ["Drama", "Mystery", "Sci-Fi"],
     description:
@@ -73,6 +79,7 @@ const MOVIES = [
   },
   {
     id: 7,
+    type: "movie",
     title: "The Wolf of Wall Street",
     genres: ["Crime", "Comedy"],
     description:
@@ -80,23 +87,25 @@ const MOVIES = [
     release: "2013",
     rating: 8.2,
     poster:
-      "https://image.tmdb.org/t/p/w500/34m2tygAYBGqA9MXKhRDtzObOgb.jpg",
+      "https://i.pinimg.com/1200x/e4/f7/36/e4f736f717cf4c7737f698c2d8ff117d.jpg",
     youtubeId: "iszwuX1AK6A",
   },
   {
     id: 8,
-    title: "Interstellar",
+    type: "movie",
+    title: "The Beekeeper",
     genres: ["Sci-Fi", "Adventure"],
     description:
       "Explorers travel through a wormhole in search of a new home for humanity.",
     release: "2014",
     rating: 8.7,
     poster:
-      "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+      "https://i.pinimg.com/736x/29/50/48/2950486f7783090c0bb0310e23d5d421.jpg",
     youtubeId: "zSWdZVtXT7E",
   },
   {
     id: 9,
+    type: "movie",
     title: "Anyone But You",
     genres: ["Romance", "Comedy"],
     description:
@@ -104,11 +113,12 @@ const MOVIES = [
     release: "2023",
     rating: 6.2,
     poster:
-      "https://image.tmdb.org/t/p/w500/lurEK87kukWNaHd0zYnsi3yzJrs.jpg",
+      "https://i.pinimg.com/736x/9a/d1/1b/9ad11bc8792ed7ee8a49f9c26b07600c.jpg",
     youtubeId: "bMNPn2HI7rE",
   },
   {
     id: 10,
+    type: "movie",
     title: "Inception",
     genres: ["Sci-Fi", "Adventure"],
     description:
@@ -116,11 +126,12 @@ const MOVIES = [
     release: "2010",
     rating: 8.8,
     poster:
-      "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
+      "https://i.pinimg.com/736x/50/ed/10/50ed1058240fcc82a5bbf52edc2680b4.jpg",
     youtubeId: "YoHD9XEInc0",
   },
   {
     id: 11,
+    type: "movie",
     title: "Poor Things",
     genres: ["Comedy", "Sci-Fi"],
     description:
@@ -128,11 +139,12 @@ const MOVIES = [
     release: "2023",
     rating: 7.9,
     poster:
-      "https://image.tmdb.org/t/p/w500/kCGlIMHnOm8JPXIf5p7oPxs5vAA.jpg",
+      "https://i.pinimg.com/736x/ee/7d/b7/ee7db7325b17fc882356e5b82a44b756.jpg",
     youtubeId: "RlbR5N6veqw",
   },
   {
     id: 12,
+    type: "movie",
     title: "10 Things I Hate About You",
     genres: ["Romance", "Comedy"],
     description:
@@ -140,11 +152,12 @@ const MOVIES = [
     release: "1999",
     rating: 7.3,
     poster:
-      "https://image.tmdb.org/t/p/w500/s1FhMAr91WL8LuGZAFnCRHXHCSC.jpg",
+      "https://i.pinimg.com/736x/fc/31/09/fc3109b7595900ec3709e4400db213ef.jpg",
     youtubeId: "HBsOt21NWEI",
   },
   {
     id: 13,
+    type: "tv",
     title: "Breaking Bad",
     genres: ["Crime", "Drama"],
     description:
@@ -152,11 +165,12 @@ const MOVIES = [
     release: "2008",
     rating: 9.5,
     poster:
-      "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
+      "https://i.pinimg.com/1200x/37/62/75/37627587496965efcc0ae42ac9dff525.jpg",
     youtubeId: "HhesaQXLuRY",
   },
   {
     id: 14,
+    type: "tv",
     title: "Stranger Things",
     genres: ["Sci-Fi", "Horror"],
     description:
@@ -164,11 +178,12 @@ const MOVIES = [
     release: "2016",
     rating: 8.7,
     poster:
-      "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
+      "https://i.pinimg.com/736x/91/17/75/9117751636528b25a7b4687cab63572d.jpg",
     youtubeId: "b9EkMc79ZSU",
   },
   {
     id: 15,
+    type: "tv",
     title: "The Last of Us",
     genres: ["Drama", "Sci-Fi"],
     description:
@@ -176,11 +191,12 @@ const MOVIES = [
     release: "2023",
     rating: 8.8,
     poster:
-      "https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg",
+      "https://i.pinimg.com/1200x/06/54/93/065493530ecea598250927fc0911ea12.jpg",
     youtubeId: "uLtkt8BonwM",
   },
   {
     id: 16,
+    type: "tv",
     title: "Severance",
     genres: ["Sci-Fi", "Thriller"],
     description:
@@ -188,7 +204,7 @@ const MOVIES = [
     release: "2022",
     rating: 8.7,
     poster:
-      "https://image.tmdb.org/t/p/w500/lNqT4Y3fCdwKqHc36u0nNzM5GhF.jpg",
+      "https://i.pinimg.com/736x/65/41/15/65411578f2fa5e1d2050542e23edfb28.jpg",
     youtubeId: "xEQP4VVuyrY",
   },
 ];
