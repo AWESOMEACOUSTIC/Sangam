@@ -24,3 +24,10 @@ video::-webkit-media-controls {
 ::-webkit-scrollbar {
   display: none;
 }
+
+@font-face {
+  font-family: 'anton';
+  src: url('./assets/fonts/anton.ttf') format('woff2');
+  font-weight: 400;
+  font-style: medium;
+}
