@@ -56,13 +56,14 @@ function YouTubeEmbed({ youtubeId, isActive }) {
 }
 
 export default function Carousel() {
+  const carouselMovies = MOVIES.slice(0, 6);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [phase, setPhase] = useState(phases.POSTER);
   const [direction, setDirection] = useState(1);
   const timerRef = useRef(null);
   const manualRef = useRef(false);
 
-  const movie = MOVIES[currentIndex];
+  const movie = carouselMovies[currentIndex];
 
   const clearTimers = useCallback(() => {
     if (timerRef.current) {
@@ -83,20 +84,21 @@ export default function Carousel() {
   );
 
   const goNext = useCallback(() => {
-    const next = (currentIndex + 1) % MOVIES.length;
+    const next = (currentIndex + 1) % carouselMovies.length;
     goToSlide(next, 1);
-  }, [currentIndex, goToSlide]);
+  }, [currentIndex, goToSlide, carouselMovies.length]);
 
   const goPrev = useCallback(() => {
-    const prev = (currentIndex - 1 + MOVIES.length) % MOVIES.length;
+    const prev =
+      (currentIndex - 1 + carouselMovies.length) % carouselMovies.length;
     goToSlide(prev, -1);
-  }, [currentIndex, goToSlide]);
+  }, [currentIndex, goToSlide, carouselMovies.length]);
 
   const advanceToNext = useCallback(() => {
     setDirection(1);
     setPhase(phases.POSTER);
-    setCurrentIndex((prev) => (prev + 1) % MOVIES.length);
-  }, []);
+    setCurrentIndex((prev) => (prev + 1) % carouselMovies.length);
+  }, [carouselMovies.length]);
 
   // Phase state machine
   useEffect(() => {
@@ -133,10 +135,10 @@ export default function Carousel() {
 
   // Preload next poster
   useEffect(() => {
-    const nextIndex = (currentIndex + 1) % MOVIES.length;
+    const nextIndex = (currentIndex + 1) % carouselMovies.length;
     const img = new Image();
-    img.src = MOVIES[nextIndex].poster;
-  }, [currentIndex]);
+    img.src = carouselMovies[nextIndex].poster;
+  }, [currentIndex, carouselMovies]);
 
   const showOverlayDetails = phase === phases.POSTER;
   const isVideoPhase =
@@ -349,7 +351,7 @@ export default function Carousel() {
 
       {/* ── Dot Indicators ── */}
       <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex gap-2 sm:gap-2.5">
-        {MOVIES.map((m, i) => (
+        {carouselMovies.map((m, i) => (
           <button
             key={m.id}
             aria-label={`Go to ${m.title}`}
