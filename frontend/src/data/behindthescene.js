@@ -17,7 +17,7 @@ const BTS_DATA = [
     "id": 3,
     "title": "Demimon Slayer: Kimetsu no Yaiba Infinity Castle",
     "type": "tv",
-    "thumbnail": "https://img.youtube.com/vi/yQEondeGvKo/maxresdefault.jpg",
+    "thumbnail": "https://i.pinimg.com/1200x/7f/82/f8/7f82f8bee60fc575746a87039b82d778.jpg",
     "youtubeId": "FLB_sLTgbPk"
   },
   {
