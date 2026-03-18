@@ -61,12 +61,12 @@ const BehindTheScene = () => {
                         <div className="w-full aspect-video relative flex items-center justify-center mb-6">
                             <ul className="relative w-full h-full m-0 p-0">
                                 <AnimatePresence>
-                                    {cards.map((card, index) => {
+                                    {cards.slice(0, 5).map((card, index) => {
                                         const isTopCard = index === 0;
                                         const scale = 1 - index * 0.06;
                                         const top = `-${index * 8}%`;
                                         const brightness = 1 - index * 0.15;
-                                        const zIndex = cards.length - index;
+                                        const zIndex = 5 - index;
 
                                         return (
                                             <CardStackable
