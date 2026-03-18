@@ -42,7 +42,7 @@ const CardStackable = ({
       />
       
       {/* Title overlay at the bottom */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-gradient-to-t from-black/90 to-transparent pointer-events-none transition-opacity duration-300">
+      <div className="absolute bottom-0 left-0 right-0 p-6 pt-12 bg-linear-to-t from-black/90 to-transparent pointer-events-none transition-opacity duration-300">
           <h3 className="text-white text-2xl font-bold sm:text-3xl lg:text-4xl">{card.title}</h3>
       </div>
 
