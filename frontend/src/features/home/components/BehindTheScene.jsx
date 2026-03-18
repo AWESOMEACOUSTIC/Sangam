@@ -47,7 +47,7 @@ const BehindTheScene = () => {
                             >
                                 Behind the Scenes
                             </h1>
-                            <div className="mt-6 flex items-center gap-2">
+                            <div className="mt-6 mb-8 flex items-center gap-2">
                                 <div className="w-1 h-6 bg-yellow-400"></div>
                                 <h2 className="text-xl sm:text-2xl font-bold text-white">
                                     Exclusive making footage
@@ -85,7 +85,7 @@ const BehindTheScene = () => {
                                 </AnimatePresence>
                             </ul>
                         </div>
-                        <div className="flex justify-center mt-12 sm:mt-16">
+                        <div className="flex justify-center mt-5 sm:mt-12">
                             <p className="text-zinc-400 font-medium text-sm text-center bg-zinc-900/50 px-4 py-2 rounded-full">
                                 Drag the top card to shuffle the deck
                             </p>
