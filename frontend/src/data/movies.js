@@ -9,7 +9,7 @@ const MOVIES = [
     rating: 9.6,
     rank: 1, 
     poster:
-      "https://i.pinimg.com/736x/c0/c3/c0/c0c3c0ecdd5899a6d926c2d683366a66.jpg",
+      "hhttps://i.pinimg.com/736x/d2/84/21/d28421688f49eb021c34347613c55611.jpg",
     youtubeId: "NHk7scrb_9I",
   },
   {
