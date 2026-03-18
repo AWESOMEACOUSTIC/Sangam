@@ -70,3 +70,4 @@ const BTS_DATA = [
     "youtubeId": "p_PJbmrX4uk"
   }
 ];
+export default BTS_DATA;
