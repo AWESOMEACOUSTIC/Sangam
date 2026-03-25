@@ -57,7 +57,7 @@ const ticketMaskStyle = {
 export default function TicketShell({ children }) {
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="relative min-h-[420px]" style={ticketMaskStyle}>
+      <div className="relative min-h-105" style={ticketMaskStyle}>
         <div className="absolute inset-0 bg-[#efe9dd]" />
 
         <div
