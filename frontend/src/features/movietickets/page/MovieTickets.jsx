@@ -14,7 +14,7 @@ import ticketData from "../service/ticketData";
 
 export default function MovieTickets() {
   return (
-    <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-18">
+    <main className="min-h-screen px-4 py-18 sm:px-6 lg:px-12">
       <TicketShell>
         <article
           aria-label="Confirmed movie ticket"
