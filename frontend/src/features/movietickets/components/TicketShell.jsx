@@ -40,7 +40,6 @@ function svgMaskUrl(path) {
 }
 
 const OUTER_PATH = buildTicketPath(VIEWBOX_WIDTH, VIEWBOX_HEIGHT, 6, 62);
-const INNER_PATH = buildTicketPath(VIEWBOX_WIDTH, VIEWBOX_HEIGHT, 22, 46);
 const MASK_URL = svgMaskUrl(OUTER_PATH);
 
 const ticketMaskStyle = {
@@ -116,12 +115,6 @@ export default function TicketShell({ children }) {
             fill="none"
             stroke="rgba(17, 17, 17, 0.96)"
             strokeWidth="3.2"
-          />
-          <path
-            d={INNER_PATH}
-            fill="none"
-            stroke="rgba(17, 17, 17, 0.42)"
-            strokeWidth="1.4"
           />
         </svg>
       </div>

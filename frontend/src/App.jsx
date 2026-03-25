@@ -6,8 +6,8 @@ import HomePage from './features/home/pages/HomePage'
 import Movie from './features/movie/pages/Movie'
 import MovieDetail from './features/moviedetail/pages/MovieDetail'
 import SeatLayout from './features/seatdetails/pages/SeatLayout'
-import Favourites from './features/favourite/page/Favourites'
 import { Toaster } from 'react-hot-toast'
+import MovieTickets from './features/movietickets/page/MovieTickets'
 
 const App = () => {
   
@@ -22,7 +22,7 @@ const App = () => {
         <Route path='/movies' element= {<Movie />} />
         <Route path='/movies/:id' element= {<MovieDetail />} />
         <Route path='/movies/:id/:date' element= {<SeatLayout />} />
-        <Route path='/favourites' element= {<Favourites />} />
+        <Route path='/movietickets' element= {<MovieTickets />} />
       </Routes>
       { !isAdminRoute && <Footer /> }
     </>
