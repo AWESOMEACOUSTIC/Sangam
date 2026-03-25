@@ -39,8 +39,8 @@ function Navbar() {
         <Link to='/' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
           Releases
         </Link>
-        <Link to='/' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
-          Favourites
+        <Link to='/movietickets' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
+          Movie Tickets
         </Link>
       </div>
       <div className='flex items-center gap-8'>
