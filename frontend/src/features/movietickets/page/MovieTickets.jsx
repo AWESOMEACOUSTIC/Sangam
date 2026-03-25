@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Armchair,
-  BadgeCheck,
   CalendarDays,
   Clock3,
   MapPin,
@@ -15,30 +14,30 @@ import ticketData from "../service/ticketData";
 
 export default function MovieTickets() {
   return (
-    <main className="min-h-screen px-4 py-10 sm:px-6 lg:px-18">
+    <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-18">
       <TicketShell>
         <article
           aria-label="Confirmed movie ticket"
-          className="grid h-full md:grid-cols-[300px_1fr]"
+          className="grid h-full md:grid-cols-[272px_1fr]"
         >
           <PosterPane />
 
           <section className="border-t border-black/15 md:border-l md:border-t-0 md:border-dashed">
-            <div className="flex h-full flex-col p-5 sm:p-6">
-              <header className="flex flex-col gap-4 border-b border-black/10 pb-5 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex h-full flex-col p-4 sm:p-5">
+              <header className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <h3 className="mt-3 text-2xl font-black uppercase tracking-[0.06em] text-[#111111] sm:text-[30px]">
+                  <h3 className="mt-1 text-2xl font-black uppercase tracking-[0.06em] text-[#111111] sm:text-[28px]">
                     {ticketData.theaterName}
                   </h3>
 
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-black/65">
+                  <p className="mt-1.5 max-w-2xl text-sm leading-5 text-black/65">
                     {ticketData.theaterAddress}
                   </p>
                 </div>
               </header>
 
-              <div className="mt-6 mb-10 grid gap-6 xl:grid-cols-[1fr_190px]">
-                <div className="grid gap-4 sm:grid-cols-2">
+              <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_176px]">
+                <div className="grid auto-rows-min gap-3 sm:grid-cols-2">
                   <TicketField
                     icon={MapPin}
                     label="Theater Address"

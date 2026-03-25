@@ -9,7 +9,7 @@ export default function TicketField({
   return (
     <div
       className={[
-        "rounded-md border border-black/10 bg-white/30 px-4 py-3",
+        "rounded-md border border-black/10 bg-white/30 px-4 py-2.5",
         "backdrop-blur-[1px]",
         className,
       ].join(" ")}
@@ -19,7 +19,7 @@ export default function TicketField({
         <span>{label}</span>
       </div>
 
-      <p className="mt-2 text-sm font-semibold leading-5 text-[#111111] sm:text-[15px]">
+      <p className="mt-1.5 text-sm font-semibold leading-5 text-[#111111] sm:text-[15px]">
         {value}
       </p>
     </div>

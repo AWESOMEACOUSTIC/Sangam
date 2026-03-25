@@ -5,16 +5,16 @@ import ticketData from "../service/ticketData";
 
 export default function QrPanel() {
   return (
-    <aside className="rounded-xl border border-black/15 bg-black p-4 text-white">
+    <aside className="self-start rounded-xl border border-black/15 bg-black p-3.5 text-white">
       <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/70">
         <ScanLine className="h-3.5 w-3.5" />
         <span>Digital Check-In</span>
       </div>
 
-      <div className="mt-4 flex justify-center rounded-lg bg-white p-3">
+      <div className="mt-3 flex justify-center rounded-lg bg-white p-2.5">
         <QRCodeSVG
           value={ticketData.qrValue}
-          size={132}
+          size={118}
           bgColor="#ffffff"
           fgColor="#111111"
           level="M"
@@ -22,11 +22,11 @@ export default function QrPanel() {
         />
       </div>
 
-      <p className="mt-3 text-center text-xs leading-5 text-white/70">
+      <p className="mt-2.5 text-center text-[12px] leading-5 text-white/70">
         Present this QR code at the entrance.
       </p>
 
-      <div className="mt-4 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-center">
+      <div className="mt-3 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-center">
         <p className="text-[10px] uppercase tracking-[0.2em] text-white/55">
           Booking ID
         </p>
