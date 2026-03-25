@@ -1,9 +1,9 @@
 import React from "react";
 
 const VIEWBOX_WIDTH = 1200;
-const VIEWBOX_HEIGHT = 460;
+const VIEWBOX_HEIGHT = 404;
 
-function buildTicketPath(width, height, inset = 0, scoop = 58) {
+function buildTicketPath(width, height, inset = 0, scoop = 52) {
   const left = inset;
   const top = inset;
   const right = width - inset;
@@ -39,7 +39,7 @@ function svgMaskUrl(path) {
   return `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
 }
 
-const OUTER_PATH = buildTicketPath(VIEWBOX_WIDTH, VIEWBOX_HEIGHT, 6, 62);
+const OUTER_PATH = buildTicketPath(VIEWBOX_WIDTH, VIEWBOX_HEIGHT, 6, 56);
 const MASK_URL = svgMaskUrl(OUTER_PATH);
 
 const ticketMaskStyle = {
@@ -56,7 +56,7 @@ const ticketMaskStyle = {
 export default function TicketShell({ children }) {
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="relative min-h-105" style={ticketMaskStyle}>
+      <div className="relative min-h-[24rem]" style={ticketMaskStyle}>
         <div className="absolute inset-0 bg-[#efe9dd]" />
 
         <div
@@ -102,7 +102,7 @@ export default function TicketShell({ children }) {
           }}
         />
 
-        <div className="relative z-10 h-full">{children}</div>
+        <div className="relative z-10 h-full px-4 sm:px-5 md:px-12">{children}</div>
 
         <svg
           viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
