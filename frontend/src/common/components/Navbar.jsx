@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Menu, Search, TicketPlus, X } from 'lucide-react';
 import { useClerk, UserButton, useUser } from '@clerk/react';
+import MagneticLink from './MagneticLink';
 
 function Navbar() {
 
@@ -35,43 +36,53 @@ function Navbar() {
       md:rounded-full border overflow-hidden transition-all duration-300
       bg-black/70 md:backdrop-blur-xl md:backdrop-saturate-150
       ${isScrolled
-        ? 'md:bg-slate-950/35 md:border-white/15 md:shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
-        : 'md:bg-white/10 md:border-gray-300/20 md:shadow-none'}
+          ? 'md:bg-slate-950/35 md:border-white/15 md:shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
+          : 'md:bg-white/10 md:border-gray-300/20 md:shadow-none'}
       ${isOpen ? 'max-md:w-full' : 'max-md:w-0'}`}>
         <X
           className='md:hidden absolute top-6 right-6 w-6 h-6 cursor-pointer'
           onClick={() => setIsOpen(!isOpen)}
         />
 
-        <Link to='/' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
-          Home
-        </Link>
-        <Link to='/' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
-          Movies
-        </Link>
-        <Link to='/' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
-          Theaters
-        </Link>
-        <Link to='/' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
-          Releases
-        </Link>
-        <Link to='/movietickets' onClick={() => { scrollTo(0, 0), setIsOpen(false) }}>
-          Movie Tickets
-        </Link>
+        <MagneticLink>
+          <Link to='/' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>
+            Home
+          </Link>
+        </MagneticLink>
+        <MagneticLink>
+          <Link to='/' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>
+            Movies
+          </Link>
+        </MagneticLink>
+        <MagneticLink>
+          <Link to='/' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>
+            Theaters
+          </Link>
+        </MagneticLink>
+        <MagneticLink>
+          <Link to='/' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>
+            Releases
+          </Link>
+        </MagneticLink>
+        <MagneticLink>
+          <Link to='/movietickets' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>
+            Movie Tickets
+          </Link>
+        </MagneticLink>
       </div>
       <div className='flex items-center gap-8'>
         <Search className='max-md:hidden w-6 h-6 cursor-pointer' />
         {!user ? (
           <button
-          onClick={openSignIn}
+            onClick={openSignIn}
             className='px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-full transition rounded-full font-medium'>
             Login
-          </button> 
+          </button>
         ) : (
           <UserButton>
             <UserButton.MenuItems>
-              <UserButton.Action label = "My Bookings" labelIcon = {<TicketPlus width={15} />} 
-              onClick={ () => {navigate('/bookings')}}
+              <UserButton.Action label="My Bookings" labelIcon={<TicketPlus width={15} />}
+                onClick={() => { navigate('/bookings') }}
               />
             </UserButton.MenuItems>
           </UserButton>
