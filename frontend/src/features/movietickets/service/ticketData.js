@@ -1,6 +1,6 @@
 const ticketData = {
-  movieTitle: "Breathe",
-  posterSrc: "/images/breathe-poster.jpg",
+  movieTitle: "Toji Fushiguro",
+  posterSrc: "https://i.pinimg.com/736x/38/88/6a/38886aa55d01fa7d3e801b77f1289897.jpg",
   theaterName: "PVR Cinemas",
   theaterAddress: "Forum Mall, Koramangala, Bengaluru, Karnataka 560095",
   showDate: "Fri, 29 Mar 2026",
