@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Menu, Search, TicketPlus, X } from 'lucide-react';
 import { useClerk, UserButton, useUser } from '@clerk/react';
@@ -6,6 +6,18 @@ import { useClerk, UserButton, useUser } from '@clerk/react';
 function Navbar() {
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 16);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const { user } = useUser();
   const { openSignIn } = useClerk();
@@ -20,8 +32,12 @@ function Navbar() {
       </Link>
       <div className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:font-medium
       max-md:text-lg z-50 flex flex-col md:flex-row items-center max-md:justify-center gap-8 md:px-8 py-3 max-md:h-screen
-      md:rounded-full backdrop:blur bg-black/70 md:bg-white/10 md:border border-gray-300/20 overflow-hidden transition-[width]
-      duration-300 ${isOpen ? 'max-md:w-full' : 'max-md:w-0'}`}>
+      md:rounded-full border overflow-hidden transition-all duration-300
+      bg-black/70 md:backdrop-blur-xl md:backdrop-saturate-150
+      ${isScrolled
+        ? 'md:bg-slate-950/35 md:border-white/15 md:shadow-[0_8px_30px_rgba(0,0,0,0.35)]'
+        : 'md:bg-white/10 md:border-gray-300/20 md:shadow-none'}
+      ${isOpen ? 'max-md:w-full' : 'max-md:w-0'}`}>
         <X
           className='md:hidden absolute top-6 right-6 w-6 h-6 cursor-pointer'
           onClick={() => setIsOpen(!isOpen)}
