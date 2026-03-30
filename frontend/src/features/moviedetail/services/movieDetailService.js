@@ -1,4 +1,4 @@
-import MOVIES from "../../../data/movie";
+import MOVIES from "../../../data/movies";
 
 export function slugifyMovieTitle(title = "") {
   return title
