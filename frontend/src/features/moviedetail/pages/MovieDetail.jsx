@@ -5,7 +5,7 @@ import { ArrowLeft, CalendarDays, PlayCircle, Star } from "lucide-react";
 import TrailerModal from "../../../common/components/TrailerModal";
 import MOVIES from "../../../data/movies";
 import useMovieDetail from "../hooks/useMovieDetail";
-import { buildMoviePath } from "../service/movieDetailService";
+import { buildMoviePath } from "../services/movieDetailService";
 
 function MovieNotFound() {
   return (

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import {
   getCanonicalMoviePath,
   getMovieBySlug,
-} from "../service/movieDetailService";
+} from "../services/movieDetailService";
 
 export default function useMovieDetail(routeSlug) {
   return useMemo(() => {
