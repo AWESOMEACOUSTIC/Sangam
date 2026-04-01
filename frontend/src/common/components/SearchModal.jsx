@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { searchMovies } from "../utils/searchMovies";
 import MOVIES from "../../data/movies";
-import { buildMoviePath } from "../../features/moviedetail/service/movieDetailService";
+import { buildMoviePath } from "../../features/moviedetail/services/movieDetailService"
 
 function SearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState("");

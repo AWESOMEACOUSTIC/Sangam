@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-import { buildMoviePath } from "../../features/moviedetail/service/movieDetailService";
+import { buildMoviePath } from "../../features/moviedetail/services/movieDetailService";
 
 function StarRating({ rating }) {
   return (
