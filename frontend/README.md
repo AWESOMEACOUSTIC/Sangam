@@ -1,16 +1,280 @@
-# React + Vite
+# Sangam Frontend Tracking Board
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This README tracks delivery of the booking journey in two phases:
 
-Currently, two official plugins are available:
+- Frontend completion with mocked data and stable UX flow
+- Backend integration for transactional logic and persistence
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Target Folder Structure
 
-## React Compiler
+This is the folder structure we will follow so the booking flow scales cleanly.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Important note:
 
-## Expanding the ESLint configuration
+- Keep `src/features/bookings` as the primary booking domain (do not create a separate parallel booking feature).
+- Move seat selection, checkout, confirmation ticket, and booking history under this single domain over time.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend Target Structure
+
+```text
+frontend/
+	src/
+		app/
+			router/
+				AppRoutes.jsx
+				routePaths.js
+			guards/
+				ProtectedRoute.jsx
+			providers/
+				AppProviders.jsx
+
+		common/
+			components/
+			hooks/
+			utils/
+			constants/
+			services/
+				httpClient.js
+
+		features/
+			home/
+			movie/
+			moviedetail/
+
+			bookings/
+				routes/
+					bookingRoutes.jsx
+				api/
+					bookingsApi.js
+				hooks/
+					useBookingAuthGate.js
+					useSeatSelection.js
+					usePricing.js
+					useHoldTimer.js
+				components/
+					SeatGrid.jsx
+					SeatLegend.jsx
+					FareSummary.jsx
+					BookingTimer.jsx
+				utils/
+					bookingPath.js
+					seatFormatter.js
+				constants/
+					bookingConstants.js
+				types/
+					booking.types.d.ts
+				mocks/
+					bookingMocks.js
+				tests/
+					bookingFlow.test.jsx
+
+				showtimes/
+					pages/
+						ShowtimesPage.jsx
+					components/
+					hooks/
+
+				seat-selection/
+					pages/
+						SeatLayoutPage.jsx
+					components/
+					hooks/
+
+				checkout/
+					pages/
+						CheckoutPage.jsx
+					components/
+					hooks/
+
+				confirmation/
+					pages/
+						BookingConfirmationPage.jsx
+					components/
+
+				history/
+					pages/
+						MyBookingsPage.jsx
+					components/
+					hooks/
+
+		main.jsx
+```
+
+### Backend Target Structure (Next Phase)
+
+```text
+backend/
+	src/
+		app.js
+		server.js
+		config/
+		middleware/
+			auth.middleware.js
+			error.middleware.js
+		modules/
+			bookings/
+				bookings.routes.js
+				bookings.controller.js
+				bookings.service.js
+				bookings.repository.js
+				bookings.validator.js
+			shows/
+			seats/
+			payments/
+		utils/
+		tests/
+```
+
+### Migration Mapping From Current Frontend Folders
+
+- `src/features/seatdetails/pages/SeatLayout.jsx` -> `src/features/bookings/seat-selection/pages/SeatLayoutPage.jsx`
+- `src/features/movietickets/page/MovieTickets.jsx` -> `src/features/bookings/confirmation/pages/BookingConfirmationPage.jsx`
+- `src/features/movietickets/service/ticketData.js` -> `src/features/bookings/mocks/bookingMocks.js` (frontend phase) and later `src/features/bookings/api/bookingsApi.js` (backend phase)
+- `src/features/bookings/pages/Bookings.jsx` -> `src/features/bookings/history/pages/MyBookingsPage.jsx`
+
+### Structure Adoption Checklist
+
+- [ ] Create subdomains under `src/features/bookings` (showtimes, seat-selection, checkout, confirmation, history).
+- [ ] Move existing booking-related pages from temporary folders into `src/features/bookings`.
+- [ ] Keep common, reusable logic in hooks and utils inside the booking domain.
+- [ ] Keep route definitions centralized and reference booking route constants.
+- [ ] Remove old temporary folders after route migration is complete.
+
+## Tracker 1: Frontend Completion Checklist
+
+### A. Routing and Flow Foundation
+
+- [ ] Define and lock canonical route structure for booking flow.
+- [ ] Add route for seat selection page.
+- [ ] Add route for checkout page.
+- [ ] Add route for booking confirmation page.
+- [ ] Add route for my bookings page.
+- [ ] Remove or repurpose any legacy temporary ticket route.
+- [ ] Ensure broken or missing routes do not exist in navbar and CTA links.
+
+### B. Auth Gate and Redirect Behavior
+
+- [ ] Add reusable booking auth gate hook.
+- [ ] On Book tickets click, check user auth state before navigation.
+- [ ] If logged out, open sign in and store intended return URL.
+- [ ] After successful sign in, redirect user to intended seat page.
+- [ ] Protect seat and checkout routes with route-level guard.
+- [ ] Handle direct URL access while logged out and return correctly after login.
+
+### C. Showtime and Seat Selection UX
+
+- [ ] Add showtime selection entry point from movie detail page.
+- [ ] Navigate to seat page using stable show identifier.
+- [ ] Build interactive seat grid with seat state badges.
+- [ ] Implement seat states: available, selected, reserved, sold, blocked.
+- [ ] Add seat selection constraints such as max seats per booking.
+- [ ] Add loading, empty, and error states for seat map UI.
+
+### D. Pricing and Order Summary
+
+- [ ] Implement frontend pricing calculator with seat class awareness.
+- [ ] Add fees and tax line items in summary.
+- [ ] Show live recalculation when seats are selected or removed.
+- [ ] Validate summary values before proceeding to checkout.
+
+### E. Checkout and Ticket UI (Frontend First)
+
+- [ ] Build checkout page UI with mock booking session response.
+- [ ] Add mock payment success and failure flows for UI validation.
+- [ ] Build confirmation ticket page with dynamic props.
+- [ ] Replace static ticket placeholder data usage with state-driven data.
+- [ ] Add copyable booking reference and share-ready ticket details.
+
+### F. My Bookings Frontend
+
+- [ ] Build my bookings list page with mock records.
+- [ ] Show upcoming and past bookings sections.
+- [ ] Add status labels such as confirmed, cancelled, expired.
+- [ ] Add booking detail preview interaction.
+
+### G. Frontend Quality and Testing
+
+- [ ] Add unit tests for auth gate and redirect logic.
+- [ ] Add unit tests for pricing calculations.
+- [ ] Add integration test for end-to-end frontend happy path.
+- [ ] Add integration test for logged-out deep-link access path.
+- [ ] Run lint and resolve booking-related warnings and errors.
+
+## Frontend Done Criteria
+
+- [ ] User can complete movie detail to seat to checkout to confirmation flow using mock services.
+- [ ] Login redirection works in all protected booking routes.
+- [ ] No broken navigation paths remain in booking journey.
+- [ ] Frontend tests pass for critical booking flows.
+
+---
+
+## Tracker 2: Backend Integration Checklist
+
+### H. API Contract Finalization
+
+- [ ] Define request and response contracts for showtime listing.
+- [ ] Define request and response contracts for seat map retrieval.
+- [ ] Define request and response contracts for hold seats API.
+- [ ] Define request and response contracts for checkout and booking confirmation API.
+- [ ] Define request and response contracts for my bookings and booking detail APIs.
+
+### I. Auth and Authorization
+
+- [ ] Verify user identity on protected booking endpoints.
+- [ ] Enforce ownership checks for my bookings endpoints.
+- [ ] Reject unauthorized access with consistent error format.
+
+### J. Seat Hold and Concurrency
+
+- [ ] Implement seat hold creation with expiry.
+- [ ] Implement hold release on timeout.
+- [ ] Revalidate seat availability before booking confirmation.
+- [ ] Prevent double booking under concurrent requests.
+- [ ] Return conflict-safe responses for already booked seats.
+
+### K. Pricing and Booking Core Logic
+
+- [ ] Move price calculation source of truth to backend.
+- [ ] Store and return fare breakdown with taxes and fees.
+- [ ] Persist booking session and confirmed booking entities.
+- [ ] Generate deterministic booking reference IDs.
+
+### L. Payment and Confirmation
+
+- [ ] Integrate payment intent creation.
+- [ ] Verify payment status before confirming booking.
+- [ ] Handle failed payment and rollback hold state.
+- [ ] Return canonical confirmation payload for frontend ticket UI.
+
+### M. My Bookings and History APIs
+
+- [ ] Implement user booking list endpoint with pagination.
+- [ ] Implement booking detail endpoint.
+- [ ] Return normalized booking status timeline.
+
+### N. Reliability and Production Hardening
+
+- [ ] Add schema validation for all booking inputs.
+- [ ] Add idempotency protection for booking confirmation API.
+- [ ] Add rate limiting for booking-sensitive endpoints.
+- [ ] Add structured logs for hold, payment, and confirmation events.
+- [ ] Add monitoring metrics for booking success, failure, and drop-off.
+
+## Backend Done Criteria
+
+- [ ] Seat locking is concurrency safe.
+- [ ] Pricing is backend authoritative.
+- [ ] Confirmed bookings are persistent and queryable.
+- [ ] Payment and booking state remain consistent under failures.
+- [ ] Frontend can switch from mock services to real APIs without route or UX redesign.
+
+---
+
+## Final Release Checklist
+
+- [ ] Frontend tracker complete.
+- [ ] Backend tracker complete.
+- [ ] End-to-end manual test pass on full journey.
+- [ ] Basic monitoring and error handling in place.
+- [ ] Deployment notes updated for both frontend and backend.
