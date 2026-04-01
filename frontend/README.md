@@ -100,6 +100,47 @@ frontend/
 		main.jsx
 ```
 
+### Why Each Booking Folder Is Needed
+
+- routes/: Keeps booking-related route wiring isolated from app-level routing. This makes future route refactors safer and easier to test.
+- api/: Centralizes all booking network calls in one place. UI components stay clean and do not directly handle fetch details.
+- hooks/: Holds reusable booking behavior like auth gating, seat state, and pricing logic. This avoids duplicate logic across pages.
+- components/: Contains reusable UI blocks for booking screens. Shared pieces keep page files smaller and more maintainable.
+- utils/: Stores pure helper functions such as path building and seat formatting. Keeping helpers here improves readability and testability.
+- constants/: Defines stable keys, limits, and fixed values used across booking flow. It prevents magic strings and inconsistent values.
+- types/: Documents booking data contracts for stronger code clarity and safer refactoring. It also helps IDE hints and onboarding.
+- mocks/: Provides frontend-first mock data while backend APIs are in progress. This lets UI flow ship earlier without blocking.
+- tests/: Groups booking-specific tests close to the feature domain. It improves ownership and long-term reliability of the flow.
+- showtimes/: Encapsulates show discovery and selection before seat booking starts. It separates pre-booking context from transactional steps.
+- seat-selection/: Encapsulates seat map rendering and seat pick rules. This keeps the most complex interaction isolated and focused.
+- checkout/: Contains fare validation and final confirmation steps before payment. It gives a clear handoff from selection to transaction.
+- confirmation/: Owns post-booking ticket and success experience. This separation makes receipt/ticket enhancements easier later.
+- history/: Owns My Bookings list and detail experiences. It keeps account history independent from live booking flow.
+
+### Why Each Starter File Is Needed
+
+- routes/bookingRoutes.jsx: Declares all booking feature routes in one source of truth. Route paths and lazy boundaries stay organized.
+- api/bookingsApi.js: Exposes booking API functions with consistent request/response handling. Backend migration becomes a one-file integration point.
+- hooks/useBookingAuthGate.js: Guards booking entry points for logged-in users only. It also preserves and restores intended redirect targets.
+- hooks/useSeatSelection.js: Manages selected seats, constraints, and seat toggling logic. This prevents seat state bugs across components.
+- hooks/usePricing.js: Computes subtotal, fees, taxes, and total from selected seats. Keeping pricing in one hook ensures consistent calculations.
+- hooks/useHoldTimer.js: Tracks seat-hold countdown and expiry behavior. It prepares frontend for real backend hold and release logic.
+- components/SeatGrid.jsx: Renders seat matrix and handles seat interaction callbacks. It isolates complex visual and click behavior.
+- components/SeatLegend.jsx: Shows meaning of seat statuses like available or sold. This improves UX clarity and reduces booking mistakes.
+- components/FareSummary.jsx: Presents fare breakdown in a reusable summary panel. The same component can be reused in seat and checkout pages.
+- components/BookingTimer.jsx: Displays hold timer and urgency messaging to users. It supports better conversion and timeout awareness.
+- utils/bookingPath.js: Builds consistent booking URLs from route params and IDs. It avoids duplicated path string assembly across pages.
+- utils/seatFormatter.js: Normalizes seat labels and seat display helpers. It keeps seat display rules consistent everywhere.
+- constants/bookingConstants.js: Stores booking limits, defaults, and reusable constants. It reduces hard-coded values spread across files.
+- types/booking.types.d.ts: Defines the shapes of booking, seat, show, and pricing entities. This acts as living documentation for the domain.
+- mocks/bookingMocks.js: Provides realistic mock payloads for booking screens and tests. Teams can validate UX before backend readiness.
+- tests/bookingFlow.test.jsx: Covers critical flow behavior with integration-style checks. It protects core user journey from regressions.
+- showtimes/pages/ShowtimesPage.jsx: Entry screen for selecting theater/date/show. It prepares clean context before seat selection.
+- seat-selection/pages/SeatLayoutPage.jsx: Main transactional step where users pick seats. It orchestrates seat grid, summary, and hold timer.
+- checkout/pages/CheckoutPage.jsx: Final review step before payment confirmation. It validates selected data and totals before booking creation.
+- confirmation/pages/BookingConfirmationPage.jsx: Displays ticket details after successful booking. It is the canonical post-payment success state.
+- history/pages/MyBookingsPage.jsx: Shows user booking history and booking statuses. It supports account-level visibility and repeat usage.
+
 ### Backend Target Structure (Next Phase)
 
 ```text
@@ -134,7 +175,7 @@ backend/
 
 ### Structure Adoption Checklist
 
-- [ ] Create subdomains under `src/features/bookings` (showtimes, seat-selection, checkout, confirmation, history).
+- [x] Create subdomains under `src/features/bookings` (showtimes, seat-selection, checkout, confirmation, history).
 - [ ] Move existing booking-related pages from temporary folders into `src/features/bookings`.
 - [ ] Keep common, reusable logic in hooks and utils inside the booking domain.
 - [ ] Keep route definitions centralized and reference booking route constants.
