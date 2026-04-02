@@ -19,9 +19,15 @@ export function buildMovieSlug(movie) {
   return `${slugifyMovieTitle(movie.title)}-${movie.id}`;
 }
 
+function getDetailPathPrefix(movie) {
+  const contentType = String(movie?.type ?? "movie").toLowerCase();
+  return contentType === "tv" ? "/tv" : "/movie";
+}
+
 export function buildMoviePath(movie) {
   const movieSlug = buildMovieSlug(movie);
-  return movieSlug ? `/movie/${movieSlug}` : "/movie";
+  const detailPathPrefix = getDetailPathPrefix(movie);
+  return movieSlug ? `${detailPathPrefix}/${movieSlug}` : detailPathPrefix;
 }
 
 /**

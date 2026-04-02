@@ -20,6 +20,7 @@ const App = () => {
         <Route path='/' element= {<HomePage />} />
         <Route path='/movies' element= {<Movie />} />
         <Route path='/movie/:movieSlug' element= {<MovieDetail />} />
+        <Route path='/tv/:movieSlug' element= {<MovieDetail />} />
         <Route path='/movies/:id' element= {<MovieDetail />} />
         {bookingRouteDefinitions.map((routeDefinition) => (
           <Route

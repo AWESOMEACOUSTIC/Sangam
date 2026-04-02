@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, PlayCircle, Star } from "lucide-react";
 
 import TrailerModal from "../../../common/components/TrailerModal";
@@ -46,6 +46,7 @@ function MovieNotFound() {
 
 function MovieDetail() {
   const { movieSlug = "", id = "" } = useParams();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const [activeTrailer, setActiveTrailer] = useState(null);
@@ -54,7 +55,7 @@ function MovieDetail() {
   const bookingConfirmationPath = buildBookingConfirmationPath();
 
   const { movie, canonicalPath, isCanonicalPath } =
-    useMovieDetail(routeSlug);
+    useMovieDetail(routeSlug, pathname);
 
   useEffect(() => {
     if (movie && canonicalPath && !isCanonicalPath) {
