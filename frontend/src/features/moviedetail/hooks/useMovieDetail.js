@@ -4,7 +4,12 @@ import {
   getMovieBySlug,
 } from "../services/movieDetailService";
 
-export default function useMovieDetail(routeSlug) {
+function normalizePath(path = "") {
+  const normalizedPath = String(path).trim().replace(/\/+$/, "");
+  return normalizedPath || "/";
+}
+
+export default function useMovieDetail(routeSlug, currentPath = "") {
   return useMemo(() => {
     const movieSlug = String(routeSlug ?? "").trim();
     const movie = getMovieBySlug(movieSlug);
@@ -22,7 +27,8 @@ export default function useMovieDetail(routeSlug) {
     return {
       movie,
       canonicalPath,
-      isCanonicalPath: canonicalPath === `/movie/${movieSlug}`,
+      isCanonicalPath:
+        normalizePath(canonicalPath) === normalizePath(currentPath),
     };
-  }, [routeSlug]);
+  }, [routeSlug, currentPath]);
 }
