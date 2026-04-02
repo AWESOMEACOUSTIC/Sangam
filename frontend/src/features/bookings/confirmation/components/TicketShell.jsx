@@ -56,7 +56,7 @@ const ticketMaskStyle = {
 export default function TicketShell({ children }) {
   return (
     <div className="mx-auto w-full max-w-6xl">
-      <div className="relative min-h-[24rem]" style={ticketMaskStyle}>
+      <div className="relative min-h-96" style={ticketMaskStyle}>
         <div className="absolute inset-0 bg-[#efe9dd]" />
 
         <div
@@ -102,7 +102,9 @@ export default function TicketShell({ children }) {
           }}
         />
 
-        <div className="relative z-10 h-full px-4 sm:px-5 md:px-12">{children}</div>
+        <div className="relative z-10 h-full px-4 sm:px-5 md:px-12">
+          {children}
+        </div>
 
         <svg
           viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}

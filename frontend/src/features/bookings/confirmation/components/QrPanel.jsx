@@ -1,7 +1,7 @@
 import React from "react";
 import { ScanLine } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import ticketData from "../service/ticketData";
+import bookingConfirmationMock from "../../mocks/bookingMocks";
 
 export default function QrPanel() {
   return (
@@ -13,7 +13,7 @@ export default function QrPanel() {
 
       <div className="mt-3 flex justify-center rounded-lg bg-white p-2.5">
         <QRCodeSVG
-          value={ticketData.qrValue}
+          value={bookingConfirmationMock.qrValue}
           size={118}
           bgColor="#ffffff"
           fgColor="#111111"
@@ -31,7 +31,7 @@ export default function QrPanel() {
           Booking ID
         </p>
         <p className="mt-1 text-sm font-bold tracking-[0.08em] text-white">
-          {ticketData.bookingId}
+          {bookingConfirmationMock.bookingId}
         </p>
       </div>
     </aside>
