@@ -4,6 +4,10 @@ import { Menu, Search, TicketPlus, X } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/react";
 import MagneticLink from "./MagneticLink";
 import SearchModal from "./SearchModal";
+import {
+  buildBookingConfirmationPath,
+  buildMyBookingsPath,
+} from "../../features/bookings/utils/bookingPath";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +37,8 @@ function Navbar() {
   const { user } = useUser();
   const { openSignIn } = useClerk();
   const navigate = useNavigate();
+  const bookingConfirmationPath = buildBookingConfirmationPath();
+  const myBookingsPath = buildMyBookingsPath();
 
   return (
     <>
@@ -107,7 +113,7 @@ function Navbar() {
           </MagneticLink>
           <MagneticLink>
             <Link
-              to="/movietickets"
+              to={bookingConfirmationPath}
               onClick={() => {
                 scrollTo(0, 0);
                 setIsOpen(false);
@@ -153,7 +159,7 @@ function Navbar() {
                 <UserButton.Action
                   label="My Bookings"
                   labelIcon={<TicketPlus width={15} />}
-                  onClick={() => navigate("/bookings")}
+                  onClick={() => navigate(myBookingsPath)}
                 />
               </UserButton.MenuItems>
             </UserButton>

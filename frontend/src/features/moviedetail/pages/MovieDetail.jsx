@@ -6,6 +6,7 @@ import TrailerModal from "../../../common/components/TrailerModal";
 import MOVIES from "../../../data/movies";
 import useMovieDetail from "../hooks/useMovieDetail";
 import { buildMoviePath } from "../services/movieDetailService";
+import { buildBookingConfirmationPath } from "../../bookings/utils/bookingPath";
 
 function MovieNotFound() {
   return (
@@ -50,6 +51,7 @@ function MovieDetail() {
   const [activeTrailer, setActiveTrailer] = useState(null);
 
   const routeSlug = movieSlug || id;
+  const bookingConfirmationPath = buildBookingConfirmationPath();
 
   const { movie, canonicalPath, isCanonicalPath } =
     useMovieDetail(routeSlug);
@@ -147,7 +149,7 @@ function MovieDetail() {
                 </button>
 
                 <Link
-                  to="/movietickets"
+                  to={bookingConfirmationPath}
                   className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
                   Book tickets
