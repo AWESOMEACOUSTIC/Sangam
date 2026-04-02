@@ -185,11 +185,11 @@ backend/
 
 ### A. Routing and Flow Foundation
 
-- [ ] Define and lock canonical route structure for booking flow.
-- [ ] Add route for seat selection page.
+- [x] Define and lock canonical route structure for booking flow.
+- [x] Add route for seat selection page.
 - [ ] Add route for checkout page.
-- [ ] Add route for booking confirmation page.
-- [ ] Add route for my bookings page.
+- [x] Add route for booking confirmation page.
+- [x] Add route for my bookings page.
 - [ ] Remove or repurpose any legacy temporary ticket route.
 - [ ] Ensure broken or missing routes do not exist in navbar and CTA links.
 
