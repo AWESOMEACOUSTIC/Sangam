@@ -178,7 +178,7 @@ backend/
 - [x] Create subdomains under `src/features/bookings` (showtimes, seat-selection, checkout, confirmation, history).
 - [x] Move existing booking-related pages from temporary folders into `src/features/bookings`.
 - [ ] Keep common, reusable logic in hooks and utils inside the booking domain.
-- [ ] Keep route definitions centralized and reference booking route constants.
+- [x] Keep route definitions centralized and reference booking route constants.
 - [x] Remove old temporary folders after route migration is complete.
 
 ## Tracker 1: Frontend Completion Checklist
