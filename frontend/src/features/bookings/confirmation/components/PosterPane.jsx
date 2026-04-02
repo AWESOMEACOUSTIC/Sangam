@@ -1,5 +1,5 @@
 import React from "react";
-import ticketData from "../service/ticketData";
+import bookingConfirmationMock from "../../mocks/bookingMocks";
 
 export default function PosterPane() {
   return (
@@ -7,9 +7,9 @@ export default function PosterPane() {
       <div className="flex h-full flex-col rounded-[22px] border border-black/15 bg-black/90 p-2.5 shadow-[0_14px_36px_rgba(0,0,0,0.22)]">
         <div className="overflow-hidden rounded-xl border border-white/10">
           <img
-            src={ticketData.posterSrc}
-            alt={`${ticketData.movieTitle} poster`}
-            className="aspect-[3/4] max-h-[318px] w-full object-cover"
+            src={bookingConfirmationMock.posterSrc}
+            alt={`${bookingConfirmationMock.movieTitle} poster`}
+            className="aspect-3/4 max-h-79.5 w-full object-cover"
           />
         </div>
 
@@ -19,7 +19,7 @@ export default function PosterPane() {
           </p>
 
           <h2 className="mt-2 text-lg font-black uppercase tracking-[0.08em] text-white sm:text-[26px]">
-            {ticketData.movieTitle}
+            {bookingConfirmationMock.movieTitle}
           </h2>
         </div>
       </div>

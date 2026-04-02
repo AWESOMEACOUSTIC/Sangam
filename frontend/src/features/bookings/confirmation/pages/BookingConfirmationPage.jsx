@@ -6,11 +6,11 @@ import {
 	MapPin,
 	Ticket,
 } from "lucide-react";
-import PosterPane from "../../../movietickets/components/PosterPane";
-import QrPanel from "../../../movietickets/components/QrPanel";
-import TicketField from "../../../movietickets/components/TicketField";
-import TicketShell from "../../../movietickets/components/TicketShell";
-import ticketData from "../../../movietickets/service/ticketData";
+import PosterPane from "../components/PosterPane";
+import QrPanel from "../components/QrPanel";
+import TicketField from "../components/TicketField";
+import TicketShell from "../components/TicketShell";
+import bookingConfirmationMock from "../../mocks/bookingMocks";
 
 export default function BookingConfirmationPage() {
 	return (
@@ -27,11 +27,11 @@ export default function BookingConfirmationPage() {
 							<header className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-start sm:justify-between">
 								<div className="min-w-0">
 									<h3 className="mt-1 text-2xl font-black uppercase tracking-[0.06em] text-[#111111] sm:text-[28px]">
-										{ticketData.theaterName}
+										{bookingConfirmationMock.theaterName}
 									</h3>
 
 									<p className="mt-1.5 max-w-2xl text-sm leading-5 text-black/65">
-										{ticketData.theaterAddress}
+										{bookingConfirmationMock.theaterAddress}
 									</p>
 								</div>
 							</header>
@@ -41,32 +41,32 @@ export default function BookingConfirmationPage() {
 									<TicketField
 										icon={MapPin}
 										label="Theater Address"
-										value={ticketData.theaterAddress}
+										value={bookingConfirmationMock.theaterAddress}
 										className="sm:col-span-2"
 									/>
 
 									<TicketField
 										icon={CalendarDays}
 										label="Screening Date"
-										value={ticketData.showDate}
+										value={bookingConfirmationMock.showDate}
 									/>
 
 									<TicketField
 										icon={Clock3}
 										label="Screening Time"
-										value={ticketData.showTime}
+										value={bookingConfirmationMock.showTime}
 									/>
 
 									<TicketField
 										icon={Armchair}
 										label="Seat Assignments"
-										value={ticketData.seats.join(", ")}
+										value={bookingConfirmationMock.seats.join(", ")}
 									/>
 
 									<TicketField
 										icon={Ticket}
 										label="Auditorium"
-										value={ticketData.auditorium}
+										value={bookingConfirmationMock.auditorium}
 									/>
 								</div>
 
@@ -80,7 +80,7 @@ export default function BookingConfirmationPage() {
 									</p>
 
 									<p className="text-base font-black tracking-[0.12em] text-[#111111]">
-										{ticketData.bookingId}
+										{bookingConfirmationMock.bookingId}
 									</p>
 								</div>
 							</footer> */}
