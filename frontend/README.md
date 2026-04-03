@@ -187,7 +187,7 @@ backend/
 
 - [x] Define and lock canonical route structure for booking flow.
 - [x] Add route for seat selection page.
-- [ ] Add route for checkout page.
+- [x] Add route for checkout page.
 - [x] Add route for booking confirmation page.
 - [x] Add route for my bookings page.
 - [ ] Remove or repurpose any legacy temporary ticket route.
