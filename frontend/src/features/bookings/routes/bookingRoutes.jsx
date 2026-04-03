@@ -3,16 +3,25 @@ import CheckoutPage from "../checkout/pages/CheckoutPage";
 import BookingConfirmationPage from "../confirmation/pages/BookingConfirmationPage";
 import MyBookingsPage from "../history/pages/MyBookingsPage";
 import SeatLayoutPage from "../seat-selection/pages/SeatLayoutPage";
+import ProtectedBookingRoute from "./ProtectedBookingRoute";
 import { bookingPaths } from "../utils/bookingPath";
 
 export const bookingRouteDefinitions = [
 	{
 		path: bookingPaths.seatLayout,
-		element: <SeatLayoutPage />,
+		element: (
+			<ProtectedBookingRoute>
+				<SeatLayoutPage />
+			</ProtectedBookingRoute>
+		),
 	},
 	{
 		path: bookingPaths.checkout,
-		element: <CheckoutPage />,
+		element: (
+			<ProtectedBookingRoute>
+				<CheckoutPage />
+			</ProtectedBookingRoute>
+		),
 	},
 	{
 		path: bookingPaths.confirmation,
@@ -20,6 +29,10 @@ export const bookingRouteDefinitions = [
 	},
 	{
 		path: bookingPaths.myBookings,
-		element: <MyBookingsPage />,
+		element: (
+			<ProtectedBookingRoute>
+				<MyBookingsPage />
+			</ProtectedBookingRoute>
+		),
 	},
 ];
