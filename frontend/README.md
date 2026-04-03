@@ -195,12 +195,12 @@ backend/
 
 ### B. Auth Gate and Redirect Behavior
 
-- [ ] Add reusable booking auth gate hook.
-- [ ] On Book tickets click, check user auth state before navigation.
-- [ ] If logged out, open sign in and store intended return URL.
-- [ ] After successful sign in, redirect user to intended seat page.
-- [ ] Protect seat and checkout routes with route-level guard.
-- [ ] Handle direct URL access while logged out and return correctly after login.
+- [x] Add reusable booking auth gate hook.
+- [x] On Book tickets click, check user auth state before navigation.
+- [x] If logged out, open sign in and store intended return URL.
+- [x] After successful sign in, redirect user to intended seat page.
+- [x] Protect seat and checkout routes with route-level guard.
+- [x] Handle direct URL access while logged out and return correctly after login.
 
 ### C. Showtime and Seat Selection UX
 

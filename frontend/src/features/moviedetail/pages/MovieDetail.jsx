@@ -6,7 +6,8 @@ import TrailerModal from "../../../common/components/TrailerModal";
 import MOVIES from "../../../data/movies";
 import useMovieDetail from "../hooks/useMovieDetail";
 import { buildMoviePath } from "../services/movieDetailService";
-import { buildBookingConfirmationPath } from "../../bookings/utils/bookingPath";
+import useBookingAuthGate from "../../bookings/hooks/useBookingAuthGate";
+import { buildSeatLayoutPath } from "../../bookings/utils/bookingPath";
 
 function MovieNotFound() {
   return (
@@ -48,11 +49,11 @@ function MovieDetail() {
   const { movieSlug = "", id = "" } = useParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { ensureAuthenticated } = useBookingAuthGate();
 
   const [activeTrailer, setActiveTrailer] = useState(null);
 
   const routeSlug = movieSlug || id;
-  const bookingConfirmationPath = buildBookingConfirmationPath();
 
   const { movie, canonicalPath, isCanonicalPath } =
     useMovieDetail(routeSlug, pathname);
@@ -74,6 +75,24 @@ function MovieDetail() {
         (item.type ?? "movie") === movieType
     ).slice(0, 4);
   }, [movie]);
+
+  const seatLayoutPath = useMemo(() => {
+    if (!movie?.id) {
+      return buildSeatLayoutPath({});
+    }
+
+    const todayDate = new Date().toISOString().slice(0, 10);
+    return buildSeatLayoutPath({
+      movieId: movie.id,
+      date: todayDate,
+    });
+  }, [movie]);
+
+  const handleBookTickets = () => {
+    if (ensureAuthenticated(seatLayoutPath)) {
+      navigate(seatLayoutPath);
+    }
+  };
 
   if (!movie) {
     return <MovieNotFound />;
@@ -149,12 +168,13 @@ function MovieDetail() {
                   Watch trailer
                 </button>
 
-                <Link
-                  to={bookingConfirmationPath}
+                <button
+                  type="button"
+                  onClick={handleBookTickets}
                   className="inline-flex items-center rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
                   Book tickets
-                </Link>
+                </button>
               </div>
             </div>
           </div>
