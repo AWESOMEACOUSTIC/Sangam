@@ -1,5 +1,6 @@
 export const bookingPaths = Object.freeze({
 	seatLayout: "/movies/:id/:date",
+	checkout: "/checkout/:bookingSessionId",
 	confirmation: "/movietickets",
 	myBookings: "/bookings",
 });
@@ -20,4 +21,12 @@ export function buildBookingConfirmationPath() {
 
 export function buildMyBookingsPath() {
 	return bookingPaths.myBookings;
+}
+
+export function buildCheckoutPath({ bookingSessionId } = {}) {
+	if (bookingSessionId == null || bookingSessionId === "") {
+		return bookingPaths.checkout;
+	}
+
+	return `/checkout/${encodeURIComponent(String(bookingSessionId))}`;
 }
