@@ -4,6 +4,7 @@ import { Menu, Search, TicketPlus, X } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/react";
 import MagneticLink from "./MagneticLink";
 import SearchModal from "./SearchModal";
+import sangam_logo from "../../assets/images/sangam_logo.png";
 import {
   buildBookingConfirmationPath,
   buildMyBookingsPath,
@@ -47,7 +48,7 @@ function Navbar() {
                    justify-between px-6 md:px-16 lg:px-36 py-5"
       >
         <Link to="/" className="max-md:flex-1">
-          <img src="logo" alt="Logo" className="w-36 h-auto" />
+          <img src={sangam_logo} alt="Logo" className="w-36 h-auto" />
         </Link>
         <div
           className={`max-md:absolute max-md:top-0 max-md:left-0
