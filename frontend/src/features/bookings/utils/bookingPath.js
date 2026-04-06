@@ -1,29 +1,36 @@
 export const bookingPaths = Object.freeze({
-	seatLayout: "/movies/:id/:date",
+	seatLayout: "/shows/:showId/seats",
 	checkout: "/checkout/:bookingSessionId",
 	confirmation: "/movietickets",
 	myBookings: "/bookings",
 });
 
 export function buildSeatLayoutPath({
-	movieId,
-	date,
 	showId,
+	movieId,
+	movieTitle,
+	date,
 	showTime,
 	theater,
 } = {}) {
-	if (movieId == null || date == null) {
+	if (showId == null || showId === "") {
 		return bookingPaths.seatLayout;
 	}
 
-	const basePath = `/movies/${encodeURIComponent(String(movieId))}/${encodeURIComponent(
-		String(date)
-	)}`;
+	const basePath = `/shows/${encodeURIComponent(String(showId))}/seats`;
 
 	const queryParams = new URLSearchParams();
 
-	if (showId) {
-		queryParams.set("showId", String(showId));
+	if (movieId != null && movieId !== "") {
+		queryParams.set("movieId", String(movieId));
+	}
+
+	if (movieTitle) {
+		queryParams.set("movieTitle", String(movieTitle));
+	}
+
+	if (date) {
+		queryParams.set("date", String(date));
 	}
 
 	if (showTime) {
