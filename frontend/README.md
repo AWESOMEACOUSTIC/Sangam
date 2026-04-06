@@ -206,7 +206,7 @@ backend/
 
 - [x] Add showtime selection entry point from movie detail page.
 - [x] Navigate to seat page using stable show identifier.
-- [ ] Build interactive seat grid with seat state badges.
+- [x] Build interactive seat grid with seat state badges.
 - [ ] Implement seat states: available, selected, reserved, sold, blocked.
 - [ ] Add seat selection constraints such as max seats per booking.
 - [ ] Add loading, empty, and error states for seat map UI.
@@ -215,7 +215,7 @@ backend/
 
 - [ ] Implement frontend pricing calculator with seat class awareness.
 - [ ] Add fees and tax line items in summary.
-- [ ] Show live recalculation when seats are selected or removed.
+- [x] Show live recalculation when seats are selected or removed.
 - [ ] Validate summary values before proceeding to checkout.
 
 ### E. Checkout and Ticket UI (Frontend First)

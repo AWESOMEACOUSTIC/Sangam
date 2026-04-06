@@ -10,7 +10,15 @@ import BookingSummary from "../components/BookingSummary";
 function SeatLayoutPage() {
   const { showId = "" } = useParams();
   const [searchParams] = useSearchParams();
-  const { rows, selectedSeats, totalPrice } = useSeatSelection();
+  const {
+    rows,
+    selectedSeats,
+    totalPrice,
+    hoveredSeat,
+    toggleSeat,
+    startSeatHover,
+    clearSeatHover,
+  } = useSeatSelection();
 
   const movieTitle = searchParams.get("movieTitle") || "Selected Movie";
   const date = searchParams.get("date") || "";
@@ -39,7 +47,12 @@ function SeatLayoutPage() {
           </div>
 
           <div className="mt-6">
-            <SeatGrid rows={rows} />
+            <SeatGrid
+              rows={rows}
+              onSeatActivate={toggleSeat}
+              onSeatHoverStart={startSeatHover}
+              onSeatHoverEnd={clearSeatHover}
+            />
           </div>
           <div className="mt-8">
             <SeatLegend direction="row" />
@@ -48,6 +61,7 @@ function SeatLayoutPage() {
             <BookingSummary
               selectedSeats={selectedSeats}
               totalPrice={totalPrice}
+              hoveredSeat={hoveredSeat}
             />
           </div>
         </section>
@@ -56,6 +70,7 @@ function SeatLayoutPage() {
             <BookingSummary
               selectedSeats={selectedSeats}
               totalPrice={totalPrice}
+              hoveredSeat={hoveredSeat}
             />
           </div>
         </aside>

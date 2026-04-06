@@ -5,7 +5,7 @@ function rowLabel(rowNumber) {
   return String.fromCharCode(64 + rowNumber); 
 }
 
-function SeatGrid({ rows }) {
+function SeatGrid({ rows, onSeatActivate, onSeatHoverStart, onSeatHoverEnd }) {
   return (
     <section className="space-y-2.5">
       {rows.map((row) => {
@@ -24,6 +24,9 @@ function SeatGrid({ rows }) {
                   <SeatBadge
                     key={`${row.rowNumber}-L-${seat.seatNumber}`}
                     seat={seat}
+                    onActivate={onSeatActivate}
+                    onHoverStart={onSeatHoverStart}
+                    onHoverEnd={onSeatHoverEnd}
                   />
                 ))}
               </div>
@@ -35,6 +38,9 @@ function SeatGrid({ rows }) {
                   <SeatBadge
                     key={`${row.rowNumber}-R-${seat.seatNumber}`}
                     seat={seat}
+                    onActivate={onSeatActivate}
+                    onHoverStart={onSeatHoverStart}
+                    onHoverEnd={onSeatHoverEnd}
                   />
                 ))}
               </div>
