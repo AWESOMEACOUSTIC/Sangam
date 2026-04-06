@@ -5,14 +5,37 @@ export const bookingPaths = Object.freeze({
 	myBookings: "/bookings",
 });
 
-export function buildSeatLayoutPath({ movieId, date }) {
+export function buildSeatLayoutPath({
+	movieId,
+	date,
+	showId,
+	showTime,
+	theater,
+} = {}) {
 	if (movieId == null || date == null) {
 		return bookingPaths.seatLayout;
 	}
 
-	return `/movies/${encodeURIComponent(String(movieId))}/${encodeURIComponent(
+	const basePath = `/movies/${encodeURIComponent(String(movieId))}/${encodeURIComponent(
 		String(date)
 	)}`;
+
+	const queryParams = new URLSearchParams();
+
+	if (showId) {
+		queryParams.set("showId", String(showId));
+	}
+
+	if (showTime) {
+		queryParams.set("showTime", String(showTime));
+	}
+
+	if (theater) {
+		queryParams.set("theater", String(theater));
+	}
+
+	const queryString = queryParams.toString();
+	return queryString ? `${basePath}?${queryString}` : basePath;
 }
 
 export function buildBookingConfirmationPath() {

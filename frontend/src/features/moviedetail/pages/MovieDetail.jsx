@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CalendarDays, PlayCircle, Star } from "lucide-react";
+import toast from "react-hot-toast";
 
 import TrailerModal from "../../../common/components/TrailerModal";
 import MOVIES from "../../../data/movies";
@@ -8,6 +9,7 @@ import useMovieDetail from "../hooks/useMovieDetail";
 import { buildMoviePath } from "../services/movieDetailService";
 import useBookingAuthGate from "../../bookings/hooks/useBookingAuthGate";
 import { buildSeatLayoutPath } from "../../bookings/utils/bookingPath";
+import useShowtimeSelection from "../../bookings/showtimes/hooks/useShowtimeSelection";
 
 function MovieNotFound() {
   return (
@@ -58,6 +60,13 @@ function MovieDetail() {
   const { movie, canonicalPath, isCanonicalPath } =
     useMovieDetail(routeSlug, pathname);
 
+  const {
+    showtimes,
+    selectedShowtime,
+    selectedShowtimeId,
+    setSelectedShowtimeId,
+  } = useShowtimeSelection(movie?.id);
+
   useEffect(() => {
     if (movie && canonicalPath && !isCanonicalPath) {
       navigate(canonicalPath, { replace: true });
@@ -77,18 +86,25 @@ function MovieDetail() {
   }, [movie]);
 
   const seatLayoutPath = useMemo(() => {
-    if (!movie?.id) {
-      return buildSeatLayoutPath({});
+    if (!movie?.id || !selectedShowtime) {
+      return "";
     }
 
-    const todayDate = new Date().toISOString().slice(0, 10);
     return buildSeatLayoutPath({
       movieId: movie.id,
-      date: todayDate,
+      date: selectedShowtime.date,
+      showId: selectedShowtime.id,
+      showTime: selectedShowtime.time,
+      theater: selectedShowtime.theater,
     });
-  }, [movie]);
+  }, [movie, selectedShowtime]);
 
   const handleBookTickets = () => {
+    if (!selectedShowtime || !seatLayoutPath) {
+      toast.error("Please select a showtime first.");
+      return;
+    }
+
     if (ensureAuthenticated(seatLayoutPath)) {
       navigate(seatLayoutPath);
     }
@@ -155,6 +171,41 @@ function MovieDetail() {
                       {genre}
                     </span>
                   ))}
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400">
+                    Select showtime
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {showtimes.map((showtime) => {
+                      const isSelected = showtime.id === selectedShowtimeId;
+
+                      return (
+                        <button
+                          key={showtime.id}
+                          type="button"
+                          onClick={() => setSelectedShowtimeId(showtime.id)}
+                          className={[
+                            "rounded-xl border px-3 py-2 text-left transition",
+                            "focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400/80",
+                            isSelected
+                              ? "border-yellow-300 bg-yellow-400/20 text-yellow-100"
+                              : "border-white/15 bg-black/30 text-zinc-200 hover:border-white/30 hover:bg-white/5",
+                          ].join(" ")}
+                        >
+                          <p className="text-xs font-medium uppercase tracking-[0.08em]">
+                            {showtime.dateLabel}
+                          </p>
+                          <p className="mt-1 text-sm font-semibold">{showtime.time}</p>
+                          <p className="mt-1 text-[11px] text-zinc-300">
+                            {showtime.theater}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
