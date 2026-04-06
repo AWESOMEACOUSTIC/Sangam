@@ -15,7 +15,7 @@ function BookingSummary({ selectedSeats, totalPrice }) {
           selectedSeats.map((seat) => (
             <div
               key={`selected-${seat.rowNumber}-${seat.seatNumber}`}
-              className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3 text-base text-zinc-200"
+              className="flex items-center justify-between rounded-xl border border-white/5 bg-white/3 px-4 py-3 text-base text-zinc-200"
             >
               <p>
                 Row {seat.rowNumber} / Seat {seat.seatNumber}

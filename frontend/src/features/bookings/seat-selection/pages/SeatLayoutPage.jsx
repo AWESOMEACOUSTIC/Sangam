@@ -18,19 +18,15 @@ function SeatLayoutPage() {
   const theater = searchParams.get("theater") || "IMAX Hall";
 
   return (
-    <main className="min-h-screen bg-zinc-950 px-4 pb-10 pt-24 sm:px-6 lg:px-10">
-      {/* ── Top bar ── */}
+    <main className="min-h-screen bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
       <div className="mx-auto mb-6 flex max-w-6xl items-center gap-4">
         <BackButton />
         <h1 className="text-3xl font-black tracking-widest text-primary">
           {theater.split(" ")[0].toUpperCase()}
         </h1>
       </div>
-
-      {/* ── Desktop two-column / Mobile single-column ── */}
       <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_340px]">
-        {/* ── Left: seating area ── */}
-        <section className="rounded-3xl border border-white/10 bg-gradient-to-b from-[#14142a] to-[#0d0d1c] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)] sm:p-7">
+        <section className="rounded-3xl border border-white/10 bg-linear-to-b from-[#14142a] to-[#0d0d1c] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)] sm:p-7">
           <MovieHeader
             movieTitle={movieTitle}
             date={date}
@@ -45,13 +41,9 @@ function SeatLayoutPage() {
           <div className="mt-6">
             <SeatGrid rows={rows} />
           </div>
-
-          {/* Legend below grid on all sizes */}
           <div className="mt-8">
             <SeatLegend direction="row" />
           </div>
-
-          {/* Mobile-only summary (hidden on lg+) */}
           <div className="mt-8 lg:hidden">
             <BookingSummary
               selectedSeats={selectedSeats}
@@ -60,7 +52,7 @@ function SeatLayoutPage() {
           </div>
         </section>
         <aside className="hidden lg:block">
-          <div className="sticky top-28 rounded-3xl border border-white/10 bg-gradient-to-b from-[#14142a] to-[#0d0d1c] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+          <div className="sticky top-28 rounded-3xl border border-white/10 bg-linear-to-b from-[#14142a] to-[#0d0d1c] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
             <BookingSummary
               selectedSeats={selectedSeats}
               totalPrice={totalPrice}
