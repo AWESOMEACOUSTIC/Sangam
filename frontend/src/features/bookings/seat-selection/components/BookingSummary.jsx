@@ -1,4 +1,4 @@
-function BookingSummary({ selectedSeats, totalPrice }) {
+function BookingSummary({ selectedSeats, totalPrice, hoveredSeat }) {
   const hasSeats = selectedSeats.length > 0;
 
   return (
@@ -8,6 +8,11 @@ function BookingSummary({ selectedSeats, totalPrice }) {
           Selected Seats
         </p>
         <div className="mt-2 h-0.5 w-14 rounded-full bg-primary lg:mx-0 mx-auto" />
+        <p className="mt-3 text-center text-xs text-zinc-400 lg:text-left">
+          {hoveredSeat
+            ? `Preview: Row ${hoveredSeat.rowNumber} / Seat ${hoveredSeat.seatNumber} - $${hoveredSeat.price}`
+            : "Hover or focus a seat to preview its price"}
+        </p>
       </div>
 
       <div className="mt-5 flex-1 space-y-3">
