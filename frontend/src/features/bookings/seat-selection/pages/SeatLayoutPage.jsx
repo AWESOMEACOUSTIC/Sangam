@@ -1,7 +1,75 @@
-import React from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+import useSeatSelection from "../../hooks/useSeatSelection";
+import BackButton from "../components/BackButton";
+import MovieHeader from "../components/MovieHeader";
+import ScreenDisplay from "../components/ScreenDisplay";
+import SeatGrid from "../components/SeatGrid";
+import SeatLegend from "../components/SeatLegend";
+import BookingSummary from "../components/BookingSummary";
 
 function SeatLayoutPage() {
-	return <div>SeatLayout</div>;
+  const { showId = "" } = useParams();
+  const [searchParams] = useSearchParams();
+  const { rows, selectedSeats, totalPrice } = useSeatSelection();
+
+  const movieTitle = searchParams.get("movieTitle") || "Selected Movie";
+  const date = searchParams.get("date") || "";
+  const showTime = searchParams.get("showTime") || "Time TBA";
+  const theater = searchParams.get("theater") || "IMAX Hall";
+
+  return (
+    <main className="min-h-screen bg-zinc-950 px-4 pb-10 pt-24 sm:px-6 lg:px-10">
+      {/* ── Top bar ── */}
+      <div className="mx-auto mb-6 flex max-w-6xl items-center gap-4">
+        <BackButton />
+        <h1 className="text-3xl font-black tracking-widest text-primary">
+          {theater.split(" ")[0].toUpperCase()}
+        </h1>
+      </div>
+
+      {/* ── Desktop two-column / Mobile single-column ── */}
+      <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_340px]">
+        {/* ── Left: seating area ── */}
+        <section className="rounded-3xl border border-white/10 bg-gradient-to-b from-[#14142a] to-[#0d0d1c] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.55)] sm:p-7">
+          <MovieHeader
+            movieTitle={movieTitle}
+            date={date}
+            showTime={showTime}
+            showId={showId}
+          />
+
+          <div className="mt-8">
+            <ScreenDisplay />
+          </div>
+
+          <div className="mt-6">
+            <SeatGrid rows={rows} />
+          </div>
+
+          {/* Legend below grid on all sizes */}
+          <div className="mt-8">
+            <SeatLegend direction="row" />
+          </div>
+
+          {/* Mobile-only summary (hidden on lg+) */}
+          <div className="mt-8 lg:hidden">
+            <BookingSummary
+              selectedSeats={selectedSeats}
+              totalPrice={totalPrice}
+            />
+          </div>
+        </section>
+        <aside className="hidden lg:block">
+          <div className="sticky top-28 rounded-3xl border border-white/10 bg-gradient-to-b from-[#14142a] to-[#0d0d1c] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+            <BookingSummary
+              selectedSeats={selectedSeats}
+              totalPrice={totalPrice}
+            />
+          </div>
+        </aside>
+      </div>
+    </main>
+  );
 }
 
 export default SeatLayoutPage;
