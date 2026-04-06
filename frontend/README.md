@@ -204,7 +204,7 @@ backend/
 
 ### C. Showtime and Seat Selection UX
 
-- [ ] Add showtime selection entry point from movie detail page.
+- [x] Add showtime selection entry point from movie detail page.
 - [ ] Navigate to seat page using stable show identifier.
 - [ ] Build interactive seat grid with seat state badges.
 - [ ] Implement seat states: available, selected, reserved, sold, blocked.
