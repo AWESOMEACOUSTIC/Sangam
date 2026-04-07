@@ -5,9 +5,19 @@ const STATUS_STYLES = {
     "border-white/20 bg-transparent shadow-[inset_0_0_0_1px_rgba(255,255,255,0.05)] cursor-pointer hover:border-white/40 hover:bg-white/5",
   [SEAT_STATUS.RESERVED]:
     "border-transparent bg-zinc-500/45 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.03)] cursor-not-allowed",
+  [SEAT_STATUS.SOLD]:
+    "border-transparent bg-red-900/65 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] cursor-not-allowed",
+  [SEAT_STATUS.BLOCKED]:
+    "border-transparent bg-amber-700/45 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.02)] cursor-not-allowed",
   [SEAT_STATUS.SELECTED]:
     "border-primary/60 bg-primary shadow-[0_0_18px_rgba(248,69,101,0.45)] cursor-pointer",
 };
+
+const NON_INTERACTIVE_STATUSES = new Set([
+  SEAT_STATUS.RESERVED,
+  SEAT_STATUS.SOLD,
+  SEAT_STATUS.BLOCKED,
+]);
 
 function SeatBadge({
   seat,
@@ -17,8 +27,7 @@ function SeatBadge({
   onHoverEnd,
   showPricePreview = true,
 }) {
-  const isReserved = seat.status === SEAT_STATUS.RESERVED;
-  const isInteractive = interactive && !isReserved;
+  const isInteractive = interactive && !NON_INTERACTIVE_STATUSES.has(seat.status);
 
   const handleActivate = () => {
     if (!isInteractive) return;

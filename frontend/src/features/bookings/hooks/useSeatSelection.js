@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import {
 	DEFAULT_SEAT_PRICE,
+	MAX_SEAT_SELECTION,
 	SEAT_LAYOUT_TEMPLATE,
 	SEAT_STATUS,
 } from "../constants/bookingConstants";
@@ -37,15 +38,35 @@ function toSeatKey(rowNumber, seatNumber) {
 	return `${rowNumber}-${seatNumber}`;
 }
 
+function isSeatLockedStatus(status) {
+	return (
+		status === SEAT_STATUS.RESERVED ||
+		status === SEAT_STATUS.SOLD ||
+		status === SEAT_STATUS.BLOCKED
+	);
+}
+
+function countSelectedSeats(rows) {
+	return rows.reduce((count, row) => {
+		const rowSelectedCount = [...row.leftSeats, ...row.rightSeats].filter(
+			(seat) => seat.status === SEAT_STATUS.SELECTED
+		).length;
+
+		return count + rowSelectedCount;
+	}, 0);
+}
+
 export default function useSeatSelection() {
 	const [rows, setRows] = useState(() => buildInitialRows());
 	const [hoveredSeatKey, setHoveredSeatKey] = useState("");
+	const [selectionFeedback, setSelectionFeedback] = useState("");
 
 	const toggleSeat = useCallback((seat) => {
 		if (!seat) return;
+		const selectedSeatCount = countSelectedSeats(rows);
+		let maxLimitReached = false;
 
-		setRows((previousRows) =>
-			previousRows.map((row) => {
+		const nextRows = rows.map((row) => {
 				if (row.rowNumber !== seat.rowNumber) {
 					return row;
 				}
@@ -55,14 +76,23 @@ export default function useSeatSelection() {
 						return rowSeat;
 					}
 
-					if (rowSeat.status === SEAT_STATUS.RESERVED) {
+					if (isSeatLockedStatus(rowSeat.status)) {
 						return rowSeat;
 					}
 
-					const nextStatus =
-						rowSeat.status === SEAT_STATUS.SELECTED
-							? SEAT_STATUS.AVAILABLE
-							: SEAT_STATUS.SELECTED;
+					if (rowSeat.status === SEAT_STATUS.SELECTED) {
+						return {
+							...rowSeat,
+							status: SEAT_STATUS.AVAILABLE,
+						};
+					}
+
+					if (selectedSeatCount >= MAX_SEAT_SELECTION) {
+						maxLimitReached = true;
+						return rowSeat;
+					}
+
+					const nextStatus = SEAT_STATUS.SELECTED;
 
 					return {
 						...rowSeat,
@@ -75,12 +105,18 @@ export default function useSeatSelection() {
 					leftSeats: row.leftSeats.map(toggleSeatStatus),
 					rightSeats: row.rightSeats.map(toggleSeatStatus),
 				};
-			})
+			});
+
+		setRows(nextRows);
+		setSelectionFeedback(
+			maxLimitReached
+				? `You can select up to ${MAX_SEAT_SELECTION} seats per booking.`
+				: ""
 		);
-	}, []);
+	}, [rows]);
 
 	const startSeatHover = useCallback((seat) => {
-		if (!seat || seat.status === SEAT_STATUS.RESERVED) {
+		if (!seat || isSeatLockedStatus(seat.status)) {
 			setHoveredSeatKey("");
 			return;
 		}
@@ -122,6 +158,8 @@ export default function useSeatSelection() {
 		rows,
 		selectedSeats,
 		totalPrice,
+		maxSelectableSeats: MAX_SEAT_SELECTION,
+		selectionFeedback,
 		hoveredSeat,
 		toggleSeat,
 		startSeatHover,
