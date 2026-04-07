@@ -14,6 +14,8 @@ function SeatLayoutPage() {
     rows,
     selectedSeats,
     totalPrice,
+    maxSelectableSeats,
+    selectionFeedback,
     hoveredSeat,
     toggleSeat,
     startSeatHover,
@@ -56,6 +58,17 @@ function SeatLayoutPage() {
           </div>
           <div className="mt-8">
             <SeatLegend direction="row" />
+            <p
+              role="status"
+              aria-live="polite"
+              className={[
+                "mt-4 text-center text-sm lg:text-left",
+                selectionFeedback ? "text-amber-300" : "text-zinc-500",
+              ].join(" ")}
+            >
+              {selectionFeedback ||
+                `You can select up to ${maxSelectableSeats} seats per booking.`}
+            </p>
           </div>
           <div className="mt-8 lg:hidden">
             <BookingSummary

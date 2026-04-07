@@ -3,6 +3,8 @@ import SeatBadge from "./SeatBadge";
 
 const LEGEND_ITEMS = [
   { status: SEAT_STATUS.RESERVED, label: "Reserved" },
+  { status: SEAT_STATUS.SOLD, label: "Sold" },
+  { status: SEAT_STATUS.BLOCKED, label: "Blocked" },
   { status: SEAT_STATUS.AVAILABLE, label: "Available" },
   { status: SEAT_STATUS.SELECTED, label: "Your seat" },
 ];
