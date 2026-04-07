@@ -6,12 +6,19 @@ import ScreenDisplay from "../components/ScreenDisplay";
 import SeatGrid from "../components/SeatGrid";
 import SeatLegend from "../components/SeatLegend";
 import BookingSummary from "../components/BookingSummary";
+import SeatMapLoadingState from "../components/SeatMapLoadingState";
+import SeatMapStatePanel from "../components/SeatMapStatePanel";
 
 function SeatLayoutPage() {
   const { showId = "" } = useParams();
   const [searchParams] = useSearchParams();
+  const seatMapState = searchParams.get("seatMapState");
   const {
     rows,
+    isLoading,
+    loadError,
+    isEmpty,
+    retryLoadSeatMap,
     selectedSeats,
     totalPrice,
     maxSelectableSeats,
@@ -20,7 +27,10 @@ function SeatLayoutPage() {
     toggleSeat,
     startSeatHover,
     clearSeatHover,
-  } = useSeatSelection();
+  } = useSeatSelection({
+    simulateError: seatMapState === "error",
+    simulateEmpty: seatMapState === "empty",
+  });
 
   const movieTitle = searchParams.get("movieTitle") || "Selected Movie";
   const date = searchParams.get("date") || "";
@@ -49,27 +59,48 @@ function SeatLayoutPage() {
           </div>
 
           <div className="mt-6">
-            <SeatGrid
-              rows={rows}
-              onSeatActivate={toggleSeat}
-              onSeatHoverStart={startSeatHover}
-              onSeatHoverEnd={clearSeatHover}
-            />
+            {isLoading ? (
+              <SeatMapLoadingState />
+            ) : loadError ? (
+              <SeatMapStatePanel
+                title="Seat map unavailable"
+                description={loadError}
+                actionLabel="Retry loading"
+                onAction={retryLoadSeatMap}
+                tone="error"
+              />
+            ) : isEmpty ? (
+              <SeatMapStatePanel
+                title="No seats published"
+                description="Seat inventory for this show is not available yet. Try another showtime or refresh this map."
+                actionLabel="Reload seats"
+                onAction={retryLoadSeatMap}
+              />
+            ) : (
+              <SeatGrid
+                rows={rows}
+                onSeatActivate={toggleSeat}
+                onSeatHoverStart={startSeatHover}
+                onSeatHoverEnd={clearSeatHover}
+              />
+            )}
           </div>
-          <div className="mt-8">
-            <SeatLegend direction="row" />
-            <p
-              role="status"
-              aria-live="polite"
-              className={[
-                "mt-4 text-center text-sm lg:text-left",
-                selectionFeedback ? "text-amber-300" : "text-zinc-500",
-              ].join(" ")}
-            >
-              {selectionFeedback ||
-                `You can select up to ${maxSelectableSeats} seats per booking.`}
-            </p>
-          </div>
+          {!isLoading && !loadError && !isEmpty ? (
+            <div className="mt-8">
+              <SeatLegend direction="row" />
+              <p
+                role="status"
+                aria-live="polite"
+                className={[
+                  "mt-4 text-center text-sm lg:text-left",
+                  selectionFeedback ? "text-amber-300" : "text-zinc-500",
+                ].join(" ")}
+              >
+                {selectionFeedback ||
+                  `You can select up to ${maxSelectableSeats} seats per booking.`}
+              </p>
+            </div>
+          ) : null}
           <div className="mt-8 lg:hidden">
             <BookingSummary
               selectedSeats={selectedSeats}

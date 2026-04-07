@@ -209,7 +209,7 @@ backend/
 - [x] Build interactive seat grid with seat state badges.
 - [x] Implement seat states: available, selected, reserved, sold, blocked.
 - [x] Add seat selection constraints such as max seats per booking.
-- [ ] Add loading, empty, and error states for seat map UI.
+- [x] Add loading, empty, and error states for seat map UI.
 
 ### D. Pricing and Order Summary
 

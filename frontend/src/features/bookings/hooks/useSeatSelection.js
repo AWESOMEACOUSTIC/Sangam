@@ -1,10 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	DEFAULT_SEAT_PRICE,
 	MAX_SEAT_SELECTION,
 	SEAT_LAYOUT_TEMPLATE,
 	SEAT_STATUS,
 } from "../constants/bookingConstants";
+
+const MOCK_SEAT_MAP_DELAY_MS = 350;
+const SEAT_MAP_LOAD_ERROR = "We couldn't load seats right now. Please try again.";
 
 function withSeatNumbers(rowNumber, statuses, startingSeatNumber = 1) {
 	let seatNumber = startingSeatNumber;
@@ -56,13 +59,74 @@ function countSelectedSeats(rows) {
 	}, 0);
 }
 
-export default function useSeatSelection() {
-	const [rows, setRows] = useState(() => buildInitialRows());
+function resolveSeatMapRows({ simulateError, simulateEmpty }) {
+	if (simulateError) {
+		throw new Error(SEAT_MAP_LOAD_ERROR);
+	}
+
+	if (simulateEmpty) {
+		return [];
+	}
+
+	return buildInitialRows();
+}
+
+export default function useSeatSelection({
+	simulateError = false,
+	simulateEmpty = false,
+} = {}) {
+	const [rows, setRows] = useState([]);
 	const [hoveredSeatKey, setHoveredSeatKey] = useState("");
 	const [selectionFeedback, setSelectionFeedback] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
+	const [loadError, setLoadError] = useState("");
+	const [reloadToken, setReloadToken] = useState(0);
+
+	useEffect(() => {
+		let isCancelled = false;
+
+		setIsLoading(true);
+		setLoadError("");
+		setSelectionFeedback("");
+		setHoveredSeatKey("");
+
+		const timeoutId = setTimeout(() => {
+			try {
+				const seatRows = resolveSeatMapRows({
+					simulateError,
+					simulateEmpty,
+				});
+
+				if (isCancelled) return;
+				setRows(seatRows);
+			} catch (error) {
+				if (isCancelled) return;
+
+				setRows([]);
+				setLoadError(
+					error instanceof Error && error.message
+						? error.message
+						: SEAT_MAP_LOAD_ERROR
+				);
+			} finally {
+				if (!isCancelled) {
+					setIsLoading(false);
+				}
+			}
+		}, MOCK_SEAT_MAP_DELAY_MS);
+
+		return () => {
+			isCancelled = true;
+			clearTimeout(timeoutId);
+		};
+	}, [simulateEmpty, simulateError, reloadToken]);
+
+	const retryLoadSeatMap = useCallback(() => {
+		setReloadToken((current) => current + 1);
+	}, []);
 
 	const toggleSeat = useCallback((seat) => {
-		if (!seat) return;
+		if (!seat || isLoading || loadError || rows.length === 0) return;
 		const selectedSeatCount = countSelectedSeats(rows);
 		let maxLimitReached = false;
 
@@ -113,16 +177,16 @@ export default function useSeatSelection() {
 				? `You can select up to ${MAX_SEAT_SELECTION} seats per booking.`
 				: ""
 		);
-	}, [rows]);
+	}, [isLoading, loadError, rows]);
 
 	const startSeatHover = useCallback((seat) => {
-		if (!seat || isSeatLockedStatus(seat.status)) {
+		if (isLoading || loadError || !seat || isSeatLockedStatus(seat.status)) {
 			setHoveredSeatKey("");
 			return;
 		}
 
 		setHoveredSeatKey(toSeatKey(seat.rowNumber, seat.seatNumber));
-	}, []);
+	}, [isLoading, loadError]);
 
 	const clearSeatHover = useCallback(() => {
 		setHoveredSeatKey("");
@@ -154,8 +218,16 @@ export default function useSeatSelection() {
 		return null;
 	}, [hoveredSeatKey, rows]);
 
+	const isEmpty = useMemo(() => {
+		return !isLoading && !loadError && rows.length === 0;
+	}, [isLoading, loadError, rows]);
+
 	return {
 		rows,
+		isLoading,
+		loadError,
+		isEmpty,
+		retryLoadSeatMap,
 		selectedSeats,
 		totalPrice,
 		maxSelectableSeats: MAX_SEAT_SELECTION,
