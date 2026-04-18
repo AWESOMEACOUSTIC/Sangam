@@ -1,7 +1,18 @@
+function formatCurrency(value) {
+  const numericValue = Number(value ?? 0);
+
+  if (Number.isInteger(numericValue)) {
+    return `$${numericValue}`;
+  }
+
+  return `$${numericValue.toFixed(2)}`;
+}
+
 function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
   const hasSeats = selectedSeats.length > 0;
   const totalPrice = pricing?.totalPrice ?? 0;
   const classBreakdown = pricing?.classBreakdown ?? [];
+  const lineItems = pricing?.lineItems ?? [];
 
   return (
     <section className="flex h-full flex-col">
@@ -12,7 +23,7 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
         <div className="mt-2 h-0.5 w-14 rounded-full bg-primary lg:mx-0 mx-auto" />
         <p className="mt-3 text-center text-xs text-zinc-400 lg:text-left">
           {hoveredSeat
-            ? `Preview: Row ${hoveredSeat.rowNumber} / Seat ${hoveredSeat.seatNumber} - $${hoveredSeat.price}`
+            ? `Preview: Row ${hoveredSeat.rowNumber} / Seat ${hoveredSeat.seatNumber} - ${formatCurrency(hoveredSeat.price)}`
             : "Hover or focus a seat to preview its price"}
         </p>
       </div>
@@ -32,7 +43,7 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
                   {seat.seatClassLabel}
                 </p>
               </div>
-              <p className="font-medium">${seat.price}</p>
+              <p className="font-medium">{formatCurrency(seat.price)}</p>
             </div>
           ))
         ) : (
@@ -52,7 +63,21 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
               <span>
                 {entry.seatClassLabel} x{entry.seatCount}
               </span>
-              <span>${entry.lineTotal}</span>
+              <span>{formatCurrency(entry.lineTotal)}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {hasSeats && lineItems.length > 0 ? (
+        <div className="mt-3 space-y-2 rounded-xl border border-white/5 bg-black/20 p-3">
+          {lineItems.map((line) => (
+            <div
+              key={line.id}
+              className="flex items-center justify-between text-xs uppercase tracking-[0.08em] text-zinc-400"
+            >
+              <span>{line.label}</span>
+              <span>{formatCurrency(line.amount)}</span>
             </div>
           ))}
         </div>
@@ -63,7 +88,7 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
           <span className="uppercase tracking-[0.08em] text-zinc-400">
             Total:
           </span>
-          <span className="font-semibold text-cyan-400">${totalPrice}</span>
+          <span className="font-semibold text-cyan-400">{formatCurrency(totalPrice)}</span>
         </div>
 
         <button

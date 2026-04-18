@@ -9,6 +9,12 @@ export const SEAT_STATUS = Object.freeze({
 export const DEFAULT_SEAT_PRICE = 18;
 export const MAX_SEAT_SELECTION = 6;
 
+export const PRICING_RULES = Object.freeze({
+	CONVENIENCE_FEE_PER_SEAT: 1.75,
+	ORDER_PROCESSING_FEE: 2.5,
+	TAX_RATE: 0.18,
+});
+
 export const SEAT_CLASS = Object.freeze({
 	STANDARD: "standard",
 	PRIME: "prime",
