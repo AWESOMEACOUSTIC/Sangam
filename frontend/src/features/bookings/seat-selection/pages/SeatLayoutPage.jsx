@@ -1,5 +1,6 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import useSeatSelection from "../../hooks/useSeatSelection";
+import usePricing from "../../hooks/usePricing";
 import BackButton from "../components/BackButton";
 import MovieHeader from "../components/MovieHeader";
 import ScreenDisplay from "../components/ScreenDisplay";
@@ -20,7 +21,6 @@ function SeatLayoutPage() {
     isEmpty,
     retryLoadSeatMap,
     selectedSeats,
-    totalPrice,
     maxSelectableSeats,
     selectionFeedback,
     hoveredSeat,
@@ -31,6 +31,7 @@ function SeatLayoutPage() {
     simulateError: seatMapState === "error",
     simulateEmpty: seatMapState === "empty",
   });
+  const pricing = usePricing(selectedSeats);
 
   const movieTitle = searchParams.get("movieTitle") || "Selected Movie";
   const date = searchParams.get("date") || "";
@@ -104,7 +105,7 @@ function SeatLayoutPage() {
           <div className="mt-8 lg:hidden">
             <BookingSummary
               selectedSeats={selectedSeats}
-              totalPrice={totalPrice}
+              pricing={pricing}
               hoveredSeat={hoveredSeat}
             />
           </div>
@@ -113,7 +114,7 @@ function SeatLayoutPage() {
           <div className="sticky top-28 rounded-3xl border border-white/10 bg-linear-to-b from-[#14142a] to-[#0d0d1c] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
             <BookingSummary
               selectedSeats={selectedSeats}
-              totalPrice={totalPrice}
+              pricing={pricing}
               hoveredSeat={hoveredSeat}
             />
           </div>

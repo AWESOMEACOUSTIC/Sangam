@@ -9,6 +9,39 @@ export const SEAT_STATUS = Object.freeze({
 export const DEFAULT_SEAT_PRICE = 18;
 export const MAX_SEAT_SELECTION = 6;
 
+export const SEAT_CLASS = Object.freeze({
+	STANDARD: "standard",
+	PRIME: "prime",
+	RECLINER: "recliner",
+});
+
+export const SEAT_CLASS_DETAILS = Object.freeze({
+	[SEAT_CLASS.STANDARD]: Object.freeze({
+		label: "Standard",
+		price: 14,
+	}),
+	[SEAT_CLASS.PRIME]: Object.freeze({
+		label: "Prime",
+		price: 18,
+	}),
+	[SEAT_CLASS.RECLINER]: Object.freeze({
+		label: "Recliner",
+		price: 24,
+	}),
+});
+
+export function resolveSeatClassByRow(rowNumber) {
+	if (rowNumber >= 9) {
+		return SEAT_CLASS.RECLINER;
+	}
+
+	if (rowNumber >= 5) {
+		return SEAT_CLASS.PRIME;
+	}
+
+	return SEAT_CLASS.STANDARD;
+}
+
 export const SEAT_LAYOUT_TEMPLATE = [
 	{
 		rowNumber: 1,

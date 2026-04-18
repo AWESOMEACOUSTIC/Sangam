@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
 	DEFAULT_SEAT_PRICE,
 	MAX_SEAT_SELECTION,
+	resolveSeatClassByRow,
+	SEAT_CLASS_DETAILS,
 	SEAT_LAYOUT_TEMPLATE,
 	SEAT_STATUS,
 } from "../constants/bookingConstants";
@@ -11,12 +13,16 @@ const SEAT_MAP_LOAD_ERROR = "We couldn't load seats right now. Please try again.
 
 function withSeatNumbers(rowNumber, statuses, startingSeatNumber = 1) {
 	let seatNumber = startingSeatNumber;
+	const seatClass = resolveSeatClassByRow(rowNumber);
+	const seatClassDetails = SEAT_CLASS_DETAILS[seatClass];
 
 	return statuses.map((status) => ({
 		rowNumber,
 		seatNumber: seatNumber++,
 		status,
-		price: DEFAULT_SEAT_PRICE,
+		seatClass,
+		seatClassLabel: seatClassDetails?.label ?? "Standard",
+		price: seatClassDetails?.price ?? DEFAULT_SEAT_PRICE,
 	}));
 }
 
@@ -131,45 +137,45 @@ export default function useSeatSelection({
 		let maxLimitReached = false;
 
 		const nextRows = rows.map((row) => {
-				if (row.rowNumber !== seat.rowNumber) {
-					return row;
+			if (row.rowNumber !== seat.rowNumber) {
+				return row;
+			}
+
+			const toggleSeatStatus = (rowSeat) => {
+				if (rowSeat.seatNumber !== seat.seatNumber) {
+					return rowSeat;
 				}
 
-				const toggleSeatStatus = (rowSeat) => {
-					if (rowSeat.seatNumber !== seat.seatNumber) {
-						return rowSeat;
-					}
+				if (isSeatLockedStatus(rowSeat.status)) {
+					return rowSeat;
+				}
 
-					if (isSeatLockedStatus(rowSeat.status)) {
-						return rowSeat;
-					}
-
-					if (rowSeat.status === SEAT_STATUS.SELECTED) {
-						return {
-							...rowSeat,
-							status: SEAT_STATUS.AVAILABLE,
-						};
-					}
-
-					if (selectedSeatCount >= MAX_SEAT_SELECTION) {
-						maxLimitReached = true;
-						return rowSeat;
-					}
-
-					const nextStatus = SEAT_STATUS.SELECTED;
-
+				if (rowSeat.status === SEAT_STATUS.SELECTED) {
 					return {
 						...rowSeat,
-						status: nextStatus,
+						status: SEAT_STATUS.AVAILABLE,
 					};
-				};
+				}
+
+				if (selectedSeatCount >= MAX_SEAT_SELECTION) {
+					maxLimitReached = true;
+					return rowSeat;
+				}
+
+				const nextStatus = SEAT_STATUS.SELECTED;
 
 				return {
-					...row,
-					leftSeats: row.leftSeats.map(toggleSeatStatus),
-					rightSeats: row.rightSeats.map(toggleSeatStatus),
+					...rowSeat,
+					status: nextStatus,
 				};
-			});
+			};
+
+			return {
+				...row,
+				leftSeats: row.leftSeats.map(toggleSeatStatus),
+				rightSeats: row.rightSeats.map(toggleSeatStatus),
+			};
+		});
 
 		setRows(nextRows);
 		setSelectionFeedback(

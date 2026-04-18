@@ -1,5 +1,7 @@
-function BookingSummary({ selectedSeats, totalPrice, hoveredSeat }) {
+function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
   const hasSeats = selectedSeats.length > 0;
+  const totalPrice = pricing?.totalPrice ?? 0;
+  const classBreakdown = pricing?.classBreakdown ?? [];
 
   return (
     <section className="flex h-full flex-col">
@@ -22,9 +24,14 @@ function BookingSummary({ selectedSeats, totalPrice, hoveredSeat }) {
               key={`selected-${seat.rowNumber}-${seat.seatNumber}`}
               className="flex items-center justify-between rounded-xl border border-white/5 bg-white/3 px-4 py-3 text-base text-zinc-200"
             >
-              <p>
-                Row {seat.rowNumber} / Seat {seat.seatNumber}
-              </p>
+              <div>
+                <p>
+                  Row {seat.rowNumber} / Seat {seat.seatNumber}
+                </p>
+                <p className="text-xs uppercase tracking-[0.08em] text-zinc-400">
+                  {seat.seatClassLabel}
+                </p>
+              </div>
               <p className="font-medium">${seat.price}</p>
             </div>
           ))
@@ -34,6 +41,22 @@ function BookingSummary({ selectedSeats, totalPrice, hoveredSeat }) {
           </p>
         )}
       </div>
+
+      {hasSeats && classBreakdown.length > 0 ? (
+        <div className="mt-3 space-y-2 rounded-xl border border-white/5 bg-black/20 p-3">
+          {classBreakdown.map((entry) => (
+            <div
+              key={entry.seatClass}
+              className="flex items-center justify-between text-xs uppercase tracking-[0.08em] text-zinc-400"
+            >
+              <span>
+                {entry.seatClassLabel} x{entry.seatCount}
+              </span>
+              <span>${entry.lineTotal}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       <div className="mt-6 border-t border-white/10 pt-5">
         <div className="flex items-center justify-center gap-2 text-2xl lg:justify-between">
