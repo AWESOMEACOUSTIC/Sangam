@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import {
 	DEFAULT_SEAT_PRICE,
+	PRICING_RULES,
 	SEAT_CLASS,
 	SEAT_CLASS_DETAILS,
 } from "../constants/bookingConstants";
@@ -10,6 +11,10 @@ const SEAT_CLASS_ORDER = [
 	SEAT_CLASS.PRIME,
 	SEAT_CLASS.RECLINER,
 ];
+
+function roundCurrency(value) {
+	return Math.round((value + Number.EPSILON) * 100) / 100;
+}
 
 function resolveSeatClassLabel(seatClass) {
 	return SEAT_CLASS_DETAILS[seatClass]?.label ?? "Standard";
@@ -33,7 +38,12 @@ export default function usePricing(selectedSeats = []) {
 			return {
 				seatCount: 0,
 				classBreakdown: [],
+				lineItems: [],
 				subtotal: 0,
+				convenienceFee: 0,
+				orderProcessingFee: 0,
+				taxAmount: 0,
+				feesAndTaxesTotal: 0,
 				totalPrice: 0,
 			};
 		}
@@ -71,11 +81,46 @@ export default function usePricing(selectedSeats = []) {
 			0
 		);
 
+		const convenienceFee = roundCurrency(
+			selectedSeats.length * PRICING_RULES.CONVENIENCE_FEE_PER_SEAT
+		);
+		const orderProcessingFee = roundCurrency(PRICING_RULES.ORDER_PROCESSING_FEE);
+		const taxableAmount = subtotal + convenienceFee + orderProcessingFee;
+		const taxAmount = roundCurrency(taxableAmount * PRICING_RULES.TAX_RATE);
+		const feesAndTaxesTotal = roundCurrency(
+			convenienceFee + orderProcessingFee + taxAmount
+		);
+		const totalPrice = roundCurrency(subtotal + feesAndTaxesTotal);
+
+		const lineItems = [
+			{ id: "subtotal", label: "Seat Subtotal", amount: roundCurrency(subtotal) },
+			{
+				id: "convenience-fee",
+				label: `Convenience Fee (${selectedSeats.length} x $${PRICING_RULES.CONVENIENCE_FEE_PER_SEAT})`,
+				amount: convenienceFee,
+			},
+			{
+				id: "order-processing",
+				label: "Order Processing Fee",
+				amount: orderProcessingFee,
+			},
+			{
+				id: "tax",
+				label: `Tax (${Math.round(PRICING_RULES.TAX_RATE * 100)}%)`,
+				amount: taxAmount,
+			},
+		];
+
 		return {
 			seatCount: selectedSeats.length,
 			classBreakdown,
-			subtotal,
-			totalPrice: subtotal,
+			lineItems,
+			subtotal: roundCurrency(subtotal),
+			convenienceFee,
+			orderProcessingFee,
+			taxAmount,
+			feesAndTaxesTotal,
+			totalPrice,
 		};
 	}, [selectedSeats]);
 }

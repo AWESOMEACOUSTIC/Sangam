@@ -214,7 +214,7 @@ backend/
 ### D. Pricing and Order Summary
 
 - [x] Implement frontend pricing calculator with seat class awareness.
-- [ ] Add fees and tax line items in summary.
+- [x] Add fees and tax line items in summary.
 - [x] Show live recalculation when seats are selected or removed.
 - [ ] Validate summary values before proceeding to checkout.
 
