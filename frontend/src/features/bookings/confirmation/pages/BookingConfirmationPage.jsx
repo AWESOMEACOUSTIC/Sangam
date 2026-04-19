@@ -15,7 +15,15 @@ import bookingConfirmationMock from "../../mocks/bookingMocks";
 
 export default function BookingConfirmationPage() {
 	const location = useLocation();
-	const booking = location.state?.confirmation ?? bookingConfirmationMock;
+	const confirmationState = location.state?.confirmation ?? {};
+	const booking = {
+		...bookingConfirmationMock,
+		...confirmationState,
+	};
+
+	const seatAssignments = Array.isArray(booking.seats)
+		? booking.seats.join(", ")
+		: "Seats TBA";
 
 	return (
 		<main className="min-h-screen px-4 py-18 sm:px-6 lg:px-12">
@@ -64,7 +72,7 @@ export default function BookingConfirmationPage() {
 									<TicketField
 										icon={Armchair}
 										label="Seat Assignments"
-										value={booking.seats.join(", ")}
+										value={seatAssignments}
 									/>
 
 									<TicketField
@@ -77,17 +85,17 @@ export default function BookingConfirmationPage() {
 								<QrPanel booking={booking} />
 							</div>
 
-							{/* <footer className="mt-6 border-t border-black/10 pt-4">
+							<footer className="mt-6 border-t border-black/10 pt-4">
 								<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 									<p className="text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
 										Booking ID
 									</p>
 
 									<p className="text-base font-black tracking-[0.12em] text-[#111111]">
-										{bookingConfirmationMock.bookingId}
+										{booking.bookingId}
 									</p>
 								</div>
-							</footer> */}
+							</footer>
 						</div>
 					</section>
 				</article>
