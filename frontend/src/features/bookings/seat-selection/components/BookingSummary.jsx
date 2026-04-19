@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 function formatCurrency(value) {
   const numericValue = Number(value ?? 0);
 
@@ -8,11 +10,31 @@ function formatCurrency(value) {
   return `$${numericValue.toFixed(2)}`;
 }
 
-function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
+function BookingSummary({ selectedSeats, pricing, hoveredSeat, onProceedToCheckout }) {
   const hasSeats = selectedSeats.length > 0;
   const totalPrice = pricing?.totalPrice ?? 0;
   const classBreakdown = pricing?.classBreakdown ?? [];
   const lineItems = pricing?.lineItems ?? [];
+  const validationErrors = pricing?.validationErrors ?? [];
+  const isSummaryValid = pricing?.isSummaryValid ?? false;
+  const [showValidationFeedback, setShowValidationFeedback] = useState(false);
+
+  useEffect(() => {
+    if (isSummaryValid) {
+      setShowValidationFeedback(false);
+    }
+  }, [isSummaryValid]);
+
+  const handleProceed = () => {
+    if (!hasSeats) return;
+
+    if (!isSummaryValid) {
+      setShowValidationFeedback(true);
+      return;
+    }
+
+    onProceedToCheckout?.();
+  };
 
   return (
     <section className="flex h-full flex-col">
@@ -83,6 +105,19 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
         </div>
       ) : null}
 
+      {showValidationFeedback && validationErrors.length > 0 ? (
+        <div
+          role="alert"
+          className="mt-3 rounded-xl border border-amber-400/25 bg-amber-950/30 px-3 py-2"
+        >
+          {validationErrors.map((error) => (
+            <p key={error} className="text-xs text-amber-200">
+              {error}
+            </p>
+          ))}
+        </div>
+      ) : null}
+
       <div className="mt-6 border-t border-white/10 pt-5">
         <div className="flex items-center justify-center gap-2 text-2xl lg:justify-between">
           <span className="uppercase tracking-[0.08em] text-zinc-400">
@@ -94,6 +129,7 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat }) {
         <button
           type="button"
           disabled={!hasSeats}
+          onClick={handleProceed}
           className="mt-5 w-full rounded-full bg-primary px-6 py-3.5 text-lg font-semibold text-white shadow-[0_0_30px_rgba(248,69,101,0.45)] transition hover:brightness-110 disabled:opacity-40 disabled:shadow-none disabled:hover:brightness-100"
         >
           Payment

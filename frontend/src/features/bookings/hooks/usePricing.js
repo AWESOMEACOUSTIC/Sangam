@@ -12,8 +12,14 @@ const SEAT_CLASS_ORDER = [
 	SEAT_CLASS.RECLINER,
 ];
 
+const CURRENCY_TOLERANCE = 0.01;
+
 function roundCurrency(value) {
 	return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
+function isSameCurrencyValue(left, right) {
+	return Math.abs(roundCurrency(left) - roundCurrency(right)) <= CURRENCY_TOLERANCE;
 }
 
 function resolveSeatClassLabel(seatClass) {
@@ -32,9 +38,71 @@ function resolveSeatPrice(seat) {
 	return resolveSeatClassUnitPrice(seat?.seatClass);
 }
 
+function getPricingValidationErrors({
+	selectedSeats,
+	classBreakdown,
+	subtotal,
+	convenienceFee,
+	orderProcessingFee,
+	taxAmount,
+	totalPrice,
+}) {
+	const validationErrors = [];
+
+	if (!selectedSeats.length) {
+		validationErrors.push("Select at least one seat before checkout.");
+		return validationErrors;
+	}
+
+	const hasInvalidSeatPrice = selectedSeats.some(
+		(seat) => !Number.isFinite(seat?.price) || seat.price <= 0
+	);
+
+	if (hasInvalidSeatPrice) {
+		validationErrors.push("One or more selected seats has an invalid fare.");
+	}
+
+	const classSeatCount = classBreakdown.reduce(
+		(count, entry) => count + entry.seatCount,
+		0
+	);
+
+	if (classSeatCount !== selectedSeats.length) {
+		validationErrors.push(
+			"Seat class counts are out of sync. Please refresh and try again."
+		);
+	}
+
+	const classSubtotal = roundCurrency(
+		classBreakdown.reduce((sum, entry) => sum + entry.lineTotal, 0)
+	);
+
+	if (!isSameCurrencyValue(classSubtotal, subtotal)) {
+		validationErrors.push(
+			"Seat subtotal does not match selected seats. Please reselect seats."
+		);
+	}
+
+	const expectedTotal = roundCurrency(
+		subtotal + convenienceFee + orderProcessingFee + taxAmount
+	);
+
+	if (!isSameCurrencyValue(expectedTotal, totalPrice)) {
+		validationErrors.push(
+			"Total amount mismatch detected. Please try again before checkout."
+		);
+	}
+
+	return validationErrors;
+}
+
 export default function usePricing(selectedSeats = []) {
 	return useMemo(() => {
 		if (!selectedSeats.length) {
+			const validationErrors = [
+				"Select at least one seat before checkout.",
+			];
+
 			return {
 				seatCount: 0,
 				classBreakdown: [],
@@ -45,6 +113,8 @@ export default function usePricing(selectedSeats = []) {
 				taxAmount: 0,
 				feesAndTaxesTotal: 0,
 				totalPrice: 0,
+				isSummaryValid: false,
+				validationErrors,
 			};
 		}
 
@@ -111,16 +181,32 @@ export default function usePricing(selectedSeats = []) {
 			},
 		];
 
+		const roundedSubtotal = roundCurrency(subtotal);
+
+		const validationErrors = getPricingValidationErrors({
+			selectedSeats,
+			classBreakdown,
+			subtotal: roundedSubtotal,
+			convenienceFee,
+			orderProcessingFee,
+			taxAmount,
+			totalPrice,
+		});
+
+		const isSummaryValid = validationErrors.length === 0;
+
 		return {
 			seatCount: selectedSeats.length,
 			classBreakdown,
 			lineItems,
-			subtotal: roundCurrency(subtotal),
+			subtotal: roundedSubtotal,
 			convenienceFee,
 			orderProcessingFee,
 			taxAmount,
 			feesAndTaxesTotal,
 			totalPrice,
+			isSummaryValid,
+			validationErrors,
 		};
 	}, [selectedSeats]);
 }

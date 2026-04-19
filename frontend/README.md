@@ -216,7 +216,7 @@ backend/
 - [x] Implement frontend pricing calculator with seat class awareness.
 - [x] Add fees and tax line items in summary.
 - [x] Show live recalculation when seats are selected or removed.
-- [ ] Validate summary values before proceeding to checkout.
+- [x] Validate summary values before proceeding to checkout.
 
 ### E. Checkout and Ticket UI (Frontend First)
 
