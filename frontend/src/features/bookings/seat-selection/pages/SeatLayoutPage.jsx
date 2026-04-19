@@ -1,6 +1,7 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useSeatSelection from "../../hooks/useSeatSelection";
 import usePricing from "../../hooks/usePricing";
+import { buildCheckoutPath } from "../../utils/bookingPath";
 import BackButton from "../components/BackButton";
 import MovieHeader from "../components/MovieHeader";
 import ScreenDisplay from "../components/ScreenDisplay";
@@ -13,6 +14,7 @@ import SeatMapStatePanel from "../components/SeatMapStatePanel";
 function SeatLayoutPage() {
   const { showId = "" } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const seatMapState = searchParams.get("seatMapState");
   const {
     rows,
@@ -37,6 +39,26 @@ function SeatLayoutPage() {
   const date = searchParams.get("date") || "";
   const showTime = searchParams.get("showTime") || "Time TBA";
   const theater = searchParams.get("theater") || "IMAX Hall";
+
+  const handleProceedToCheckout = () => {
+    if (!pricing?.isSummaryValid) {
+      return;
+    }
+
+    const bookingSessionId = `${showId || "show"}-${Date.now().toString(36)}`;
+
+    navigate(buildCheckoutPath({ bookingSessionId }), {
+      state: {
+        showId,
+        movieTitle,
+        date,
+        showTime,
+        theater,
+        selectedSeats,
+        pricing,
+      },
+    });
+  };
 
   return (
     <main className="min-h-screen bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
@@ -107,6 +129,7 @@ function SeatLayoutPage() {
               selectedSeats={selectedSeats}
               pricing={pricing}
               hoveredSeat={hoveredSeat}
+              onProceedToCheckout={handleProceedToCheckout}
             />
           </div>
         </section>
@@ -116,6 +139,7 @@ function SeatLayoutPage() {
               selectedSeats={selectedSeats}
               pricing={pricing}
               hoveredSeat={hoveredSeat}
+              onProceedToCheckout={handleProceedToCheckout}
             />
           </div>
         </aside>
