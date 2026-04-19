@@ -1,7 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import usePricing from "../../hooks/usePricing";
+import { submitMockPayment } from "../../api/bookingsApi";
 import {
+	buildBookingConfirmationPath,
 	buildMyBookingsPath,
 	buildSeatLayoutPath,
 } from "../../utils/bookingPath";
@@ -84,6 +86,8 @@ function CheckoutPage() {
 		? selectedSeatsState
 		: [];
 	const pricing = usePricing(selectedSeats);
+	const [isPaying, setIsPaying] = useState(false);
+	const [paymentError, setPaymentError] = useState("");
 
 	const seatLayoutPath = useMemo(() => {
 		return buildSeatLayoutPath({
@@ -94,6 +98,18 @@ function CheckoutPage() {
 			theater,
 		});
 	}, [date, movieTitle, showId, showTime, theater]);
+
+	const forcedPaymentOutcome = useMemo(() => {
+		const paymentResult = new URLSearchParams(location.search).get(
+			"paymentResult"
+		);
+
+		if (paymentResult === "success" || paymentResult === "failure") {
+			return paymentResult;
+		}
+
+		return "random";
+	}, [location.search]);
 
 	const checkoutValidationErrors = useMemo(() => {
 		const errors = [];
@@ -120,6 +136,41 @@ function CheckoutPage() {
 	}, [bookingSessionId, pricing, pricingSnapshot, selectedSeats.length]);
 
 	const isCheckoutValid = checkoutValidationErrors.length === 0;
+
+	const handleProceedToPayment = async () => {
+		if (!isCheckoutValid || isPaying) {
+			return;
+		}
+
+		setIsPaying(true);
+		setPaymentError("");
+
+		const paymentResult = await submitMockPayment({
+			bookingSessionId,
+			movieTitle,
+			showDate: date,
+			showTime,
+			theaterName: theater,
+			selectedSeats,
+			outcome: forcedPaymentOutcome,
+		});
+
+		if (!paymentResult.ok) {
+			setPaymentError(
+				paymentResult.message ||
+					"Payment could not be completed. Please try again."
+			);
+			setIsPaying(false);
+			return;
+		}
+
+		navigate(buildBookingConfirmationPath(), {
+			state: {
+				confirmation: paymentResult.confirmation,
+				bookingSessionId,
+			},
+		});
+	};
 
 	if (!isCheckoutValid) {
 		return (
@@ -220,6 +271,12 @@ function CheckoutPage() {
 						Fare Summary
 					</p>
 
+					<p className="mt-2 text-xs text-zinc-400">
+						{forcedPaymentOutcome === "random"
+							? "Mock payment mode: random success/failure"
+							: `Mock payment mode: forced ${forcedPaymentOutcome}`}
+					</p>
+
 					<div className="mt-4 space-y-2">
 						{pricing.lineItems.map((line) => (
 							<div
@@ -243,11 +300,22 @@ function CheckoutPage() {
 						</div>
 					</div>
 
+					{paymentError ? (
+						<div
+							role="alert"
+							className="mt-4 rounded-xl border border-red-500/25 bg-red-950/30 px-3 py-2"
+						>
+							<p className="text-xs text-red-200">{paymentError}</p>
+						</div>
+					) : null}
+
 					<button
 						type="button"
-						className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_0_28px_rgba(248,69,101,0.45)] transition hover:brightness-110"
+						onClick={handleProceedToPayment}
+						disabled={isPaying}
+						className="mt-6 w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_0_28px_rgba(248,69,101,0.45)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:brightness-100"
 					>
-						Proceed To Payment
+						{isPaying ? "Processing Payment..." : "Proceed To Payment"}
 					</button>
 				</aside>
 			</div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import {
 	Armchair,
 	CalendarDays,
@@ -13,6 +14,9 @@ import TicketShell from "../components/TicketShell";
 import bookingConfirmationMock from "../../mocks/bookingMocks";
 
 export default function BookingConfirmationPage() {
+	const location = useLocation();
+	const booking = location.state?.confirmation ?? bookingConfirmationMock;
+
 	return (
 		<main className="min-h-screen px-4 py-18 sm:px-6 lg:px-12">
 			<TicketShell>
@@ -20,18 +24,18 @@ export default function BookingConfirmationPage() {
 					aria-label="Confirmed movie ticket"
 					className="grid h-full md:grid-cols-[272px_1fr]"
 				>
-					<PosterPane />
+					<PosterPane booking={booking} />
 
 					<section className="border-t border-black/15 md:border-l md:border-t-0 md:border-dashed">
 						<div className="flex h-full flex-col p-4 sm:p-5">
 							<header className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-start sm:justify-between">
 								<div className="min-w-0">
 									<h3 className="mt-1 text-2xl font-black uppercase tracking-[0.06em] text-[#111111] sm:text-[28px]">
-										{bookingConfirmationMock.theaterName}
+										{booking.theaterName}
 									</h3>
 
 									<p className="mt-1.5 max-w-2xl text-sm leading-5 text-black/65">
-										{bookingConfirmationMock.theaterAddress}
+										{booking.theaterAddress}
 									</p>
 								</div>
 							</header>
@@ -41,36 +45,36 @@ export default function BookingConfirmationPage() {
 									<TicketField
 										icon={MapPin}
 										label="Theater Address"
-										value={bookingConfirmationMock.theaterAddress}
+										value={booking.theaterAddress}
 										className="sm:col-span-2"
 									/>
 
 									<TicketField
 										icon={CalendarDays}
 										label="Screening Date"
-										value={bookingConfirmationMock.showDate}
+										value={booking.showDate}
 									/>
 
 									<TicketField
 										icon={Clock3}
 										label="Screening Time"
-										value={bookingConfirmationMock.showTime}
+										value={booking.showTime}
 									/>
 
 									<TicketField
 										icon={Armchair}
 										label="Seat Assignments"
-										value={bookingConfirmationMock.seats.join(", ")}
+										value={booking.seats.join(", ")}
 									/>
 
 									<TicketField
 										icon={Ticket}
 										label="Auditorium"
-										value={bookingConfirmationMock.auditorium}
+										value={booking.auditorium}
 									/>
 								</div>
 
-								<QrPanel />
+								<QrPanel booking={booking} />
 							</div>
 
 							{/* <footer className="mt-6 border-t border-black/10 pt-4">
