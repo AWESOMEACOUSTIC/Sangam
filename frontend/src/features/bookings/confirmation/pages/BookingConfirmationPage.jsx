@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	Armchair,
@@ -7,6 +7,7 @@ import {
 	MapPin,
 	Ticket,
 } from "lucide-react";
+import useBookingHistory from "../../history/hooks/useBookingHistory";
 import PosterPane from "../components/PosterPane";
 import QrPanel from "../components/QrPanel";
 import TicketField from "../components/TicketField";
@@ -29,12 +30,115 @@ function hasValidConfirmationPayload(payload) {
 	);
 }
 
+function BookingTicketCard({ booking }) {
+	const seatAssignments = Array.isArray(booking.seats)
+		? booking.seats.join(", ")
+		: "Seats TBA";
+
+	return (
+		<TicketShell>
+			<article
+				aria-label="Confirmed movie ticket"
+				className="grid h-full md:grid-cols-[272px_1fr]"
+			>
+				<PosterPane booking={booking} />
+
+				<section className="border-t border-black/15 md:border-l md:border-t-0 md:border-dashed">
+					<div className="flex h-full flex-col p-4 sm:p-5">
+						<header className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-start sm:justify-between">
+							<div className="min-w-0">
+								<h3 className="mt-1 text-2xl font-black uppercase tracking-[0.06em] text-[#111111] sm:text-[28px]">
+									{booking.theaterName}
+								</h3>
+
+								<p className="mt-1.5 max-w-2xl text-sm leading-5 text-black/65">
+									{booking.theaterAddress}
+								</p>
+							</div>
+						</header>
+
+						<div className="mt-4 grid gap-4 xl:grid-cols-[1fr_176px]">
+							<div className="grid auto-rows-min gap-3 sm:grid-cols-2">
+								<TicketField
+									icon={MapPin}
+									label="Theater Address"
+									value={booking.theaterAddress}
+									className="sm:col-span-2"
+								/>
+
+								<TicketField
+									icon={CalendarDays}
+									label="Screening Date"
+									value={booking.showDate}
+								/>
+
+								<TicketField
+									icon={Clock3}
+									label="Screening Time"
+									value={booking.showTime}
+								/>
+
+								<TicketField
+									icon={Armchair}
+									label="Seat Assignments"
+									value={seatAssignments}
+								/>
+
+								<TicketField
+									icon={Ticket}
+									label="Auditorium"
+									value={booking.auditorium}
+								/>
+							</div>
+
+							<QrPanel booking={booking} />
+						</div>
+
+						<footer className="mt-6 border-t border-black/10 pt-4">
+							<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+								<p className="text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
+									Booking ID
+								</p>
+
+								<p className="text-base font-black tracking-[0.12em] text-[#111111]">
+									{booking.bookingId}
+								</p>
+							</div>
+						</footer>
+					</div>
+				</section>
+			</article>
+		</TicketShell>
+	);
+}
+
 export default function BookingConfirmationPage() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const booking = location.state?.confirmation;
+	const { bookingHistory, upsertBooking } = useBookingHistory();
+	const isCurrentBookingValid = hasValidConfirmationPayload(booking);
 
-	if (!hasValidConfirmationPayload(booking)) {
+	useEffect(() => {
+		if (!isCurrentBookingValid) {
+			return;
+		}
+
+		upsertBooking(booking);
+	}, [booking, isCurrentBookingValid, upsertBooking]);
+
+	const validBookingHistory = bookingHistory.filter(hasValidConfirmationPayload);
+
+	const ticketsToRender = isCurrentBookingValid
+		? [
+				booking,
+				...validBookingHistory.filter(
+					(historyTicket) => historyTicket.bookingId !== booking.bookingId
+				),
+			]
+		: validBookingHistory;
+
+	if (!ticketsToRender.length) {
 		return (
 			<main className="flex min-h-screen items-center justify-center bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
 				<section className="w-full max-w-2xl rounded-3xl border border-amber-500/25 bg-amber-950/20 p-6 sm:p-8">
@@ -73,85 +177,30 @@ export default function BookingConfirmationPage() {
 		);
 	}
 
-	const seatAssignments = Array.isArray(booking.seats)
-		? booking.seats.join(", ")
-		: "Seats TBA";
-
 	return (
 		<main className="min-h-screen px-4 py-18 sm:px-6 lg:px-12">
-			<TicketShell>
-				<article
-					aria-label="Confirmed movie ticket"
-					className="grid h-full md:grid-cols-[272px_1fr]"
-				>
-					<PosterPane booking={booking} />
+			<div className="mx-auto w-full max-w-6xl">
+				{/* <header className="mb-6 rounded-2xl border border-white/10 bg-white/3 px-5 py-4 backdrop-blur-sm sm:px-6">
+					<p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-300/80">
+						Movie Tickets
+					</p>
+					<h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+						{ticketsToRender.length > 1 ? "Your Tickets" : "Your Ticket"}
+					</h1>
+					<p className="mt-1 text-sm text-zinc-300/80">
+						Newest bookings appear first.
+					</p>
+				</header> */}
 
-					<section className="border-t border-black/15 md:border-l md:border-t-0 md:border-dashed">
-						<div className="flex h-full flex-col p-4 sm:p-5">
-							<header className="flex flex-col gap-3 border-b border-black/10 pb-4 sm:flex-row sm:items-start sm:justify-between">
-								<div className="min-w-0">
-									<h3 className="mt-1 text-2xl font-black uppercase tracking-[0.06em] text-[#111111] sm:text-[28px]">
-										{booking.theaterName}
-									</h3>
-
-									<p className="mt-1.5 max-w-2xl text-sm leading-5 text-black/65">
-										{booking.theaterAddress}
-									</p>
-								</div>
-							</header>
-
-							<div className="mt-4 grid gap-4 xl:grid-cols-[1fr_176px]">
-								<div className="grid auto-rows-min gap-3 sm:grid-cols-2">
-									<TicketField
-										icon={MapPin}
-										label="Theater Address"
-										value={booking.theaterAddress}
-										className="sm:col-span-2"
-									/>
-
-									<TicketField
-										icon={CalendarDays}
-										label="Screening Date"
-										value={booking.showDate}
-									/>
-
-									<TicketField
-										icon={Clock3}
-										label="Screening Time"
-										value={booking.showTime}
-									/>
-
-									<TicketField
-										icon={Armchair}
-										label="Seat Assignments"
-										value={seatAssignments}
-									/>
-
-									<TicketField
-										icon={Ticket}
-										label="Auditorium"
-										value={booking.auditorium}
-									/>
-								</div>
-
-								<QrPanel booking={booking} />
-							</div>
-
-							<footer className="mt-6 border-t border-black/10 pt-4">
-								<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-									<p className="text-xs font-semibold uppercase tracking-[0.18em] text-black/45">
-										Booking ID
-									</p>
-
-									<p className="text-base font-black tracking-[0.12em] text-[#111111]">
-										{booking.bookingId}
-									</p>
-								</div>
-							</footer>
-						</div>
-					</section>
-				</article>
-			</TicketShell>
+				<div className="space-y-8">
+					{ticketsToRender.map((ticket) => (
+						<BookingTicketCard
+							key={`${ticket.bookingId}-${ticket.showDate}-${ticket.showTime}`}
+							booking={ticket}
+						/>
+					))}
+				</div>
+			</div>
 		</main>
 	);
 }
