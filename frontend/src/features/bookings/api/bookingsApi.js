@@ -43,6 +43,7 @@ function generateBookingId(bookingSessionId = "") {
 function buildConfirmationPayload({
 	bookingSessionId,
 	movieTitle,
+	posterSrc,
 	showDate,
 	showTime,
 	theaterName,
@@ -53,8 +54,7 @@ function buildConfirmationPayload({
 
 	return {
 		movieTitle: movieTitle || "Selected Movie",
-		posterSrc:
-			"https://i.pinimg.com/736x/38/88/6a/38886aa55d01fa7d3e801b77f1289897.jpg",
+		posterSrc: posterSrc || "",
 		theaterName: theaterName || "PVR Cinemas",
 		theaterAddress:
 			"Forum Mall, Koramangala, Bengaluru, Karnataka 560095",
@@ -82,6 +82,7 @@ function resolvePaymentSuccess(outcome = "random") {
 export async function submitMockPayment({
 	bookingSessionId,
 	movieTitle,
+	posterSrc,
 	showDate,
 	showTime,
 	theaterName,
@@ -105,6 +106,7 @@ export async function submitMockPayment({
 		confirmation: buildConfirmationPayload({
 			bookingSessionId,
 			movieTitle,
+			posterSrc,
 			showDate,
 			showTime,
 			theaterName,

@@ -75,6 +75,7 @@ function CheckoutPage() {
 	const {
 		showId = "",
 		movieTitle = "Selected Movie",
+		posterSrc = "",
 		date = "",
 		showTime = "",
 		theater = "",
@@ -93,11 +94,12 @@ function CheckoutPage() {
 		return buildSeatLayoutPath({
 			showId,
 			movieTitle,
+			posterSrc,
 			date,
 			showTime,
 			theater,
 		});
-	}, [date, movieTitle, showId, showTime, theater]);
+	}, [date, movieTitle, posterSrc, showId, showTime, theater]);
 
 	const forcedPaymentOutcome = useMemo(() => {
 		const paymentResult = new URLSearchParams(location.search).get(
@@ -148,6 +150,7 @@ function CheckoutPage() {
 		const paymentResult = await submitMockPayment({
 			bookingSessionId,
 			movieTitle,
+			posterSrc,
 			showDate: date,
 			showTime,
 			theaterName: theater,

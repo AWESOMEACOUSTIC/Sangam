@@ -92,7 +92,8 @@ function MovieDetail() {
 
     return buildSeatLayoutPath({
       movieId: movie.id,
-          movieTitle: movie.title,
+      movieTitle: movie.title,
+      posterSrc: movie.poster,
       date: selectedShowtime.date,
       showId: selectedShowtime.id,
       showTime: selectedShowtime.time,
