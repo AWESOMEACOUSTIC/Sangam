@@ -1,9 +1,11 @@
 import React from "react";
 import { ScanLine } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import bookingConfirmationMock from "../../mocks/bookingMocks";
 
-export default function QrPanel({ booking = bookingConfirmationMock }) {
+export default function QrPanel({ booking }) {
+  const bookingId = booking?.bookingId || "N/A";
+  const qrValue = booking?.qrValue || bookingId;
+
   return (
     <aside className="self-start rounded-xl border border-black/15 bg-black p-3.5 text-white">
       <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-white/70">
@@ -13,7 +15,7 @@ export default function QrPanel({ booking = bookingConfirmationMock }) {
 
       <div className="mt-3 flex justify-center rounded-lg bg-white p-2.5">
         <QRCodeSVG
-          value={booking.qrValue}
+          value={qrValue}
           size={118}
           bgColor="#ffffff"
           fgColor="#111111"
@@ -31,7 +33,7 @@ export default function QrPanel({ booking = bookingConfirmationMock }) {
           Booking ID
         </p>
         <p className="mt-1 text-sm font-bold tracking-[0.08em] text-white">
-          {booking.bookingId}
+          {bookingId}
         </p>
       </div>
     </aside>

@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
 	Armchair,
 	CalendarDays,
@@ -11,15 +11,67 @@ import PosterPane from "../components/PosterPane";
 import QrPanel from "../components/QrPanel";
 import TicketField from "../components/TicketField";
 import TicketShell from "../components/TicketShell";
-import bookingConfirmationMock from "../../mocks/bookingMocks";
+import { buildMyBookingsPath } from "../../utils/bookingPath";
+
+function hasValidConfirmationPayload(payload) {
+	return Boolean(
+		payload &&
+			typeof payload.movieTitle === "string" &&
+			typeof payload.theaterName === "string" &&
+			typeof payload.theaterAddress === "string" &&
+			typeof payload.showDate === "string" &&
+			typeof payload.showTime === "string" &&
+			typeof payload.auditorium === "string" &&
+			Array.isArray(payload.seats) &&
+			payload.seats.length > 0 &&
+			typeof payload.bookingId === "string" &&
+			typeof payload.qrValue === "string"
+	);
+}
 
 export default function BookingConfirmationPage() {
 	const location = useLocation();
-	const confirmationState = location.state?.confirmation ?? {};
-	const booking = {
-		...bookingConfirmationMock,
-		...confirmationState,
-	};
+	const navigate = useNavigate();
+	const booking = location.state?.confirmation;
+
+	if (!hasValidConfirmationPayload(booking)) {
+		return (
+			<main className="min-h-screen bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
+				<section className="mx-auto max-w-2xl rounded-3xl border border-amber-500/25 bg-amber-950/20 p-6 sm:p-8">
+					<p className="text-xs uppercase tracking-[0.18em] text-amber-200">
+						Confirmation unavailable
+					</p>
+
+					<h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+						Ticket data is missing
+					</h1>
+
+					<p className="mt-3 text-sm text-amber-100/90">
+						This confirmation page needs checkout success data. Complete payment
+						from checkout to view your ticket.
+					</p>
+
+					<div className="mt-8 flex flex-wrap gap-3">
+						<button
+							type="button"
+							onClick={() => navigate(buildMyBookingsPath())}
+							className="rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-100"
+						>
+							Go To My Bookings
+						</button>
+
+						<button
+							type="button"
+							onClick={() => navigate("/")}
+							className="rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+						>
+							Go Home
+						</button>
+					</div>
+				</section>
+			</main>
+		);
+	}
 
 	const seatAssignments = Array.isArray(booking.seats)
 		? booking.seats.join(", ")
