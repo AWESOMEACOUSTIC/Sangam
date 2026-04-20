@@ -36,8 +36,8 @@ export default function BookingConfirmationPage() {
 
 	if (!hasValidConfirmationPayload(booking)) {
 		return (
-			<main className="min-h-screen bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
-				<section className="mx-auto max-w-2xl rounded-3xl border border-amber-500/25 bg-amber-950/20 p-6 sm:p-8">
+			<main className="flex min-h-screen items-center justify-center bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
+				<section className="w-full max-w-2xl rounded-3xl border border-amber-500/25 bg-amber-950/20 p-6 sm:p-8">
 					<p className="text-xs uppercase tracking-[0.18em] text-amber-200">
 						Confirmation unavailable
 					</p>
