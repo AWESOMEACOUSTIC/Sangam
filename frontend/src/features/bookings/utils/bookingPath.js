@@ -9,6 +9,7 @@ export function buildSeatLayoutPath({
 	showId,
 	movieId,
 	movieTitle,
+	posterSrc,
 	date,
 	showTime,
 	theater,
@@ -27,6 +28,10 @@ export function buildSeatLayoutPath({
 
 	if (movieTitle) {
 		queryParams.set("movieTitle", String(movieTitle));
+	}
+
+	if (posterSrc) {
+		queryParams.set("posterSrc", String(posterSrc));
 	}
 
 	if (date) {

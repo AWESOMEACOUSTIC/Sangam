@@ -36,6 +36,7 @@ function SeatLayoutPage() {
   const pricing = usePricing(selectedSeats);
 
   const movieTitle = searchParams.get("movieTitle") || "Selected Movie";
+  const posterSrc = searchParams.get("posterSrc") || "";
   const date = searchParams.get("date") || "";
   const showTime = searchParams.get("showTime") || "Time TBA";
   const theater = searchParams.get("theater") || "IMAX Hall";
@@ -51,6 +52,7 @@ function SeatLayoutPage() {
       state: {
         showId,
         movieTitle,
+        posterSrc,
         date,
         showTime,
         theater,
