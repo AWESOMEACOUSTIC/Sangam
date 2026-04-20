@@ -1,3 +1,4 @@
+const MOCK_BOOKING_SESSION_DELAY_MS = 700;
 const MOCK_PAYMENT_DELAY_MS = 1100;
 const MOCK_PAYMENT_SUCCESS_RATE = 0.72;
 
@@ -28,6 +29,38 @@ function resolveSeatLabels(selectedSeats = []) {
 		const rowLabel = String.fromCharCode(64 + Number(seat.rowNumber || 0));
 		return `${rowLabel}${seat.seatNumber}`;
 	});
+}
+
+function normalizeSeatForSession(seat = {}, index = 0) {
+	const rowNumber = Number(seat.rowNumber || 0);
+	const seatNumber = Number(seat.seatNumber || 0);
+	const rowLabel = String.fromCharCode(64 + rowNumber);
+
+	return {
+		id: `${rowNumber}-${seatNumber}-${index}`,
+		rowNumber,
+		seatNumber,
+		seatLabel: `${rowLabel}${seatNumber}`,
+		seatClassKey: seat.seatClassKey || "standard",
+		seatClassLabel: seat.seatClassLabel || "Standard",
+		price: Number(seat.price ?? 0),
+	};
+}
+
+function buildPricingSnapshot(normalizedSeats = [], pricing = {}) {
+	const seatSubtotal = normalizedSeats.reduce(
+		(total, seat) => total + Number(seat.price ?? 0),
+		0
+	);
+
+	return {
+		seatCount: Number(pricing.seatCount ?? normalizedSeats.length),
+		subtotal: Number(pricing.subtotal ?? seatSubtotal),
+		convenienceFee: Number(pricing.convenienceFee ?? 0),
+		orderProcessingFee: Number(pricing.orderProcessingFee ?? 0),
+		taxAmount: Number(pricing.taxAmount ?? 0),
+		totalPrice: Number(pricing.totalPrice ?? seatSubtotal),
+	};
 }
 
 function generateBookingId(bookingSessionId = "") {
@@ -77,6 +110,59 @@ function resolvePaymentSuccess(outcome = "random") {
 	}
 
 	return Math.random() <= MOCK_PAYMENT_SUCCESS_RATE;
+}
+
+export async function getMockBookingSession({
+	bookingSessionId,
+	showId,
+	movieTitle,
+	posterSrc,
+	showDate,
+	showTime,
+	theaterName,
+	selectedSeats,
+	pricing,
+} = {}) {
+	await wait(MOCK_BOOKING_SESSION_DELAY_MS);
+
+	if (!bookingSessionId) {
+		return {
+			ok: false,
+			message: "Checkout session id is missing.",
+		};
+	}
+
+	if (!Array.isArray(selectedSeats) || !selectedSeats.length) {
+		return {
+			ok: false,
+			message: "No selected seats were found for this checkout session.",
+		};
+	}
+
+	const normalizedSeats = selectedSeats.map(normalizeSeatForSession);
+	const pricingSnapshot = buildPricingSnapshot(normalizedSeats, pricing);
+
+	return {
+		ok: true,
+		session: {
+			bookingSessionId: String(bookingSessionId),
+			showId: showId ? String(showId) : "",
+			status: "pending_payment",
+			holdExpiresAt: new Date(Date.now() + 8 * 60 * 1000).toISOString(),
+			movieTitle: movieTitle || "Selected Movie",
+			posterSrc: posterSrc || "",
+			showDate: formatShowDate(showDate),
+			rawShowDate: showDate || "",
+			showTime: showTime || "Time TBA",
+			theaterName: theaterName || "PVR Cinemas",
+			theaterAddress:
+				"Forum Mall, Koramangala, Bengaluru, Karnataka 560095",
+			auditorium: "Audi 03",
+			paymentMethods: ["UPI", "Card", "Net Banking", "Wallet"],
+			seats: normalizedSeats,
+			pricing: pricingSnapshot,
+		},
+	};
 }
 
 export async function submitMockPayment({
