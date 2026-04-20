@@ -220,7 +220,7 @@ backend/
 
 ### E. Checkout and Ticket UI (Frontend First)
 
-- [ ] Build checkout page UI with mock booking session response.
+- [x] Build checkout page UI with mock booking session response.
 - [x] Add mock payment success and failure flows for UI validation.
 - [x] Build confirmation ticket page with dynamic props.
 - [x] Replace static ticket placeholder data usage with state-driven data.
