@@ -224,7 +224,7 @@ backend/
 - [x] Add mock payment success and failure flows for UI validation.
 - [x] Build confirmation ticket page with dynamic props.
 - [x] Replace static ticket placeholder data usage with state-driven data.
-- [ ] Add copyable booking reference and share-ready ticket details.
+- [x] Add copyable booking reference and share-ready ticket details.
 
 ### F. My Bookings Frontend
 

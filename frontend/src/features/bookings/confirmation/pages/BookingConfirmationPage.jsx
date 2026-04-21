@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
 	Armchair,
 	CalendarDays,
 	Clock3,
+	Copy,
 	MapPin,
+	Share2,
 	Ticket,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import useBookingHistory from "../../history/hooks/useBookingHistory";
 import PosterPane from "../components/PosterPane";
 import QrPanel from "../components/QrPanel";
@@ -30,10 +33,122 @@ function hasValidConfirmationPayload(payload) {
 	);
 }
 
+async function copyTextToClipboard(value) {
+	const text = String(value ?? "");
+
+	if (!text) {
+		return false;
+	}
+
+	if (
+		typeof navigator !== "undefined" &&
+		navigator.clipboard &&
+		typeof navigator.clipboard.writeText === "function"
+	) {
+		try {
+			await navigator.clipboard.writeText(text);
+			return true;
+		} catch {
+			// Continue to fallback strategy.
+		}
+	}
+
+	if (typeof document === "undefined") {
+		return false;
+	}
+
+	try {
+		const textarea = document.createElement("textarea");
+		textarea.value = text;
+		textarea.setAttribute("readonly", "");
+		textarea.style.position = "fixed";
+		textarea.style.opacity = "0";
+		document.body.appendChild(textarea);
+		textarea.select();
+
+		const isCopied = document.execCommand("copy");
+		document.body.removeChild(textarea);
+
+		return isCopied;
+	} catch {
+		return false;
+	}
+}
+
+function buildShareableTicketDetails(booking, seatAssignments) {
+	return [
+		"Sangam Movie Ticket",
+		`Booking Reference: ${booking.bookingId}`,
+		`Movie: ${booking.movieTitle}`,
+		`Theater: ${booking.theaterName}`,
+		`Address: ${booking.theaterAddress}`,
+		`Show: ${booking.showDate} at ${booking.showTime}`,
+		`Seats: ${seatAssignments}`,
+		`Auditorium: ${booking.auditorium}`,
+	].join("\n");
+}
+
 function BookingTicketCard({ booking }) {
+	const [isCopyingReference, setIsCopyingReference] = useState(false);
+	const [isSharingDetails, setIsSharingDetails] = useState(false);
+
 	const seatAssignments = Array.isArray(booking.seats)
 		? booking.seats.join(", ")
 		: "Seats TBA";
+
+	const handleCopyReference = async () => {
+		if (isCopyingReference) {
+			return;
+		}
+
+		setIsCopyingReference(true);
+		const isCopied = await copyTextToClipboard(booking.bookingId);
+
+		if (isCopied) {
+			toast.success("Booking reference copied.");
+		} else {
+			toast.error("Unable to copy booking reference.");
+		}
+
+		setIsCopyingReference(false);
+	};
+
+	const handleShareDetails = async () => {
+		if (isSharingDetails) {
+			return;
+		}
+
+		setIsSharingDetails(true);
+		const shareText = buildShareableTicketDetails(booking, seatAssignments);
+
+		try {
+			if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+				await navigator.share({
+					title: `${booking.movieTitle} Ticket`,
+					text: shareText,
+				});
+				toast.success("Ticket details shared.");
+			} else {
+				const isCopied = await copyTextToClipboard(shareText);
+				if (isCopied) {
+					toast.success("Ticket details copied for sharing.");
+				} else {
+					toast.error("Unable to share ticket details.");
+				}
+			}
+		} catch (error) {
+			if (error?.name !== "AbortError") {
+				const isCopied = await copyTextToClipboard(shareText);
+				if (isCopied) {
+					toast.success("Ticket details copied for sharing.");
+				} else {
+					toast.error("Unable to share ticket details.");
+				}
+			}
+		} finally {
+			setIsSharingDetails(false);
+		}
+	};
 
 	return (
 		<TicketShell>
@@ -103,6 +218,28 @@ function BookingTicketCard({ booking }) {
 								<p className="text-base font-black tracking-[0.12em] text-[#111111]">
 									{booking.bookingId}
 								</p>
+							</div>
+
+							<div className="mt-4 flex flex-wrap gap-2">
+								<button
+									type="button"
+									onClick={handleCopyReference}
+									disabled={isCopyingReference}
+									className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-white/55 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#111111] transition hover:bg-white/70 disabled:cursor-not-allowed disabled:opacity-65"
+								>
+									<Copy className="h-3.5 w-3.5" />
+									{isCopyingReference ? "Copying..." : "Copy Reference"}
+								</button>
+
+								<button
+									type="button"
+									onClick={handleShareDetails}
+									disabled={isSharingDetails}
+									className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-black px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white transition hover:bg-black/85 disabled:cursor-not-allowed disabled:opacity-65"
+								>
+									<Share2 className="h-3.5 w-3.5" />
+									{isSharingDetails ? "Sharing..." : "Share Details"}
+								</button>
 							</div>
 						</footer>
 					</div>
