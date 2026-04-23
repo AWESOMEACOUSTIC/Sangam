@@ -230,7 +230,7 @@ backend/
 
 - [x] Build my bookings list page with mock records.
 - [x] Show upcoming and past bookings sections.
-- [ ] Add status labels such as confirmed, cancelled, expired.
+- [x] Add status labels such as confirmed, cancelled, expired.
 - [ ] Add booking detail preview interaction.
 
 ### G. Frontend Quality and Testing
