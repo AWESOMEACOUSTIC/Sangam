@@ -229,7 +229,7 @@ backend/
 ### F. My Bookings Frontend
 
 - [x] Build my bookings list page with mock records.
-- [ ] Show upcoming and past bookings sections.
+- [x] Show upcoming and past bookings sections.
 - [ ] Add status labels such as confirmed, cancelled, expired.
 - [ ] Add booking detail preview interaction.
 
