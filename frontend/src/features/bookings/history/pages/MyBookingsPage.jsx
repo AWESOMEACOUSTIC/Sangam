@@ -14,7 +14,7 @@ const MOCK_BOOKING_RECORDS = [
 			"https://i.pinimg.com/736x/53/c4/5a/53c45af9024f6f3404389d7dd0c5d2ea.jpg",
 		theaterName: "INOX Megaplex",
 		theaterAddress: "Phoenix Marketcity, Whitefield, Bengaluru 560048",
-		showDate: "Sun, 30 Mar 2026",
+		showDate: "Sun, 30 Mar 2030",
 		showTime: "9:30 PM",
 		auditorium: "Audi 07",
 		seats: ["D9", "D10"],
@@ -62,6 +62,25 @@ function resolveTicketTimestamp(ticket) {
 
 	const parsedTime = new Date(ticket.createdAt).getTime();
 	return Number.isNaN(parsedTime) ? 0 : parsedTime;
+}
+
+function resolveShowDateTimeTimestamp(ticket) {
+	const showDate = String(ticket?.showDate || "").trim();
+	const showTime = String(ticket?.showTime || "").trim();
+
+	const candidateDateTimes = [
+		`${showDate} ${showTime}`.trim(),
+		showDate,
+	].filter(Boolean);
+
+	for (const candidate of candidateDateTimes) {
+		const parsedTime = new Date(candidate).getTime();
+		if (!Number.isNaN(parsedTime)) {
+			return parsedTime;
+		}
+	}
+
+	return null;
 }
 
 function BookingListCard({ booking, onOpenTicket }) {
@@ -134,6 +153,47 @@ function BookingListCard({ booking, onOpenTicket }) {
 	);
 }
 
+function BookingSection({
+	title,
+	helpText,
+	bookings,
+	emptyMessage,
+	onOpenTicket,
+}) {
+	return (
+		<section className="rounded-2xl border border-white/10 bg-white/2 p-4 sm:p-5">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<div>
+					<h2 className="text-xl font-black uppercase tracking-[0.08em] text-white sm:text-2xl">
+						{title}
+					</h2>
+					<p className="mt-1 text-sm text-zinc-300/85">{helpText}</p>
+				</div>
+
+				<span className="inline-flex min-w-8 items-center justify-center rounded-full border border-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-zinc-200">
+					{bookings.length}
+				</span>
+			</div>
+
+			{bookings.length ? (
+				<div className="mt-4 space-y-4">
+					{bookings.map((booking) => (
+						<BookingListCard
+							key={`${title}-${booking.bookingId}`}
+							booking={booking}
+							onOpenTicket={() => onOpenTicket(booking)}
+						/>
+					))}
+				</div>
+			) : (
+				<p className="mt-4 rounded-xl border border-dashed border-white/15 bg-black/20 px-4 py-3 text-sm text-zinc-300/80">
+					{emptyMessage}
+				</p>
+			)}
+		</section>
+	);
+}
+
 function MyBookingsPage() {
 	const navigate = useNavigate();
 	const { bookingHistory } = useBookingHistory();
@@ -156,7 +216,72 @@ function MyBookingsPage() {
 		);
 	}, [validHistoryRecords]);
 
+	const { upcomingBookings, pastBookings } = useMemo(() => {
+		const nowTimestamp = Date.now();
+		const upcoming = [];
+		const past = [];
+
+		for (const booking of bookings) {
+			const showTimestamp = resolveShowDateTimeTimestamp(booking);
+
+			if (showTimestamp == null || showTimestamp >= nowTimestamp) {
+				upcoming.push(booking);
+			} else {
+				past.push(booking);
+			}
+		}
+
+		upcoming.sort((left, right) => {
+			const leftTimestamp = resolveShowDateTimeTimestamp(left);
+			const rightTimestamp = resolveShowDateTimeTimestamp(right);
+
+			if (leftTimestamp == null && rightTimestamp == null) {
+				return resolveTicketTimestamp(right) - resolveTicketTimestamp(left);
+			}
+
+			if (leftTimestamp == null) {
+				return 1;
+			}
+
+			if (rightTimestamp == null) {
+				return -1;
+			}
+
+			return leftTimestamp - rightTimestamp;
+		});
+
+		past.sort((left, right) => {
+			const leftTimestamp = resolveShowDateTimeTimestamp(left);
+			const rightTimestamp = resolveShowDateTimeTimestamp(right);
+
+			if (leftTimestamp == null && rightTimestamp == null) {
+				return resolveTicketTimestamp(right) - resolveTicketTimestamp(left);
+			}
+
+			if (leftTimestamp == null) {
+				return 1;
+			}
+
+			if (rightTimestamp == null) {
+				return -1;
+			}
+
+			return rightTimestamp - leftTimestamp;
+		});
+
+		return {
+			upcomingBookings: upcoming,
+			pastBookings: past,
+		};
+	}, [bookings]);
+
 	const isUsingMockRecords = validHistoryRecords.length === 0;
+
+	const handleOpenTicket = (booking) => {
+		navigate(buildBookingConfirmationPath(), {
+			state: { confirmation: booking },
+		});
+	};
 
 	return (
 		<main className="min-h-screen bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
@@ -169,7 +294,7 @@ function MyBookingsPage() {
 						{bookings.length > 1 ? "Your Booking Records" : "Your Booking Record"}
 					</h1>
 					<p className="mt-1 text-sm text-zinc-300/80">
-						Newest records appear first. Open any ticket to view full details.
+						Your records are separated into upcoming and past bookings.
 					</p>
 
 					{isUsingMockRecords ? (
@@ -179,18 +304,22 @@ function MyBookingsPage() {
 					) : null}
 				</header>
 
-				<div className="mt-6 space-y-4">
-					{bookings.map((booking) => (
-						<BookingListCard
-							key={booking.bookingId}
-							booking={booking}
-							onOpenTicket={() =>
-								navigate(buildBookingConfirmationPath(), {
-									state: { confirmation: booking },
-								})
-							}
-						/>
-					))}
+				<div className="mt-6 space-y-6">
+					<BookingSection
+						title="Upcoming Bookings"
+						helpText="Shows that are scheduled for now or later."
+						bookings={upcomingBookings}
+						emptyMessage="No upcoming bookings yet."
+						onOpenTicket={handleOpenTicket}
+					/>
+
+					<BookingSection
+						title="Past Bookings"
+						helpText="Completed shows from your booking history."
+						bookings={pastBookings}
+						emptyMessage="No past bookings to show yet."
+						onOpenTicket={handleOpenTicket}
+					/>
 				</div>
 			</section>
 		</main>
