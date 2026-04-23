@@ -5,8 +5,35 @@ import bookingConfirmationMock from "../../mocks/bookingMocks";
 import useBookingHistory from "../hooks/useBookingHistory";
 import { buildBookingConfirmationPath } from "../../utils/bookingPath";
 
+const BOOKING_STATUS = Object.freeze({
+	CONFIRMED: "confirmed",
+	CANCELLED: "cancelled",
+	EXPIRED: "expired",
+});
+
+const BOOKING_STATUS_STYLE_MAP = Object.freeze({
+	[BOOKING_STATUS.CONFIRMED]: {
+		label: "Confirmed",
+		className:
+			"rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-200",
+	},
+	[BOOKING_STATUS.CANCELLED]: {
+		label: "Cancelled",
+		className:
+			"rounded-full border border-rose-400/35 bg-rose-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-rose-200",
+	},
+	[BOOKING_STATUS.EXPIRED]: {
+		label: "Expired",
+		className:
+			"rounded-full border border-amber-400/35 bg-amber-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-200",
+	},
+});
+
 const MOCK_BOOKING_RECORDS = [
-	bookingConfirmationMock,
+	{
+		...bookingConfirmationMock,
+		status: BOOKING_STATUS.EXPIRED,
+	},
 	{
 		...bookingConfirmationMock,
 		movieTitle: "Interstellar",
@@ -20,6 +47,7 @@ const MOCK_BOOKING_RECORDS = [
 		seats: ["D9", "D10"],
 		bookingId: "CNF-94LM2Q",
 		qrValue: "CNF-94LM2Q|Interstellar|2026-03-30|9:30 PM|D9,D10",
+		status: BOOKING_STATUS.CONFIRMED,
 		createdAt: "2026-03-24T14:20:00.000Z",
 	},
 	{
@@ -35,9 +63,26 @@ const MOCK_BOOKING_RECORDS = [
 		seats: ["F5", "F6", "F7"],
 		bookingId: "CNF-71PD3R",
 		qrValue: "CNF-71PD3R|Dune: Part Two|2026-03-22|6:15 PM|F5,F6,F7",
+		status: BOOKING_STATUS.CANCELLED,
 		createdAt: "2026-03-20T11:05:00.000Z",
 	},
 ];
+
+function normalizeBookingStatus(status) {
+	const normalizedValue = String(status || "")
+		.trim()
+		.toLowerCase();
+
+	if (
+		normalizedValue === BOOKING_STATUS.CONFIRMED ||
+		normalizedValue === BOOKING_STATUS.CANCELLED ||
+		normalizedValue === BOOKING_STATUS.EXPIRED
+	) {
+		return normalizedValue;
+	}
+
+	return null;
+}
 
 function hasValidBookingRecord(payload) {
 	return Boolean(
@@ -83,10 +128,27 @@ function resolveShowDateTimeTimestamp(ticket) {
 	return null;
 }
 
+function resolveBookingStatus(booking, showTimestamp, nowTimestamp) {
+	const explicitStatus = normalizeBookingStatus(booking?.status);
+
+	if (explicitStatus) {
+		return explicitStatus;
+	}
+
+	if (showTimestamp != null && showTimestamp < nowTimestamp) {
+		return BOOKING_STATUS.EXPIRED;
+	}
+
+	return BOOKING_STATUS.CONFIRMED;
+}
+
 function BookingListCard({ booking, onOpenTicket }) {
 	const seatAssignments = Array.isArray(booking.seats)
 		? booking.seats.join(", ")
 		: "Seats TBA";
+	const statusStyle =
+		BOOKING_STATUS_STYLE_MAP[booking.bookingStatus] ||
+		BOOKING_STATUS_STYLE_MAP[BOOKING_STATUS.CONFIRMED];
 
 	return (
 		<article className="overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-[#16162c] to-[#0f0f20] shadow-[0_18px_50px_rgba(0,0,0,0.45)]">
@@ -110,8 +172,8 @@ function BookingListCard({ booking, onOpenTicket }) {
 						<p className="text-lg font-black uppercase tracking-[0.06em] text-white sm:text-xl">
 							{booking.movieTitle}
 						</p>
-						<span className="rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-200">
-							Confirmed
+						<span className={statusStyle.className}>
+							{statusStyle.label}
 						</span>
 					</div>
 
@@ -223,11 +285,20 @@ function MyBookingsPage() {
 
 		for (const booking of bookings) {
 			const showTimestamp = resolveShowDateTimeTimestamp(booking);
+			const bookingStatus = resolveBookingStatus(
+				booking,
+				showTimestamp,
+				nowTimestamp
+			);
+			const bookingWithStatus = {
+				...booking,
+				bookingStatus,
+			};
 
 			if (showTimestamp == null || showTimestamp >= nowTimestamp) {
-				upcoming.push(booking);
+				upcoming.push(bookingWithStatus);
 			} else {
-				past.push(booking);
+				past.push(bookingWithStatus);
 			}
 		}
 
