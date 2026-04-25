@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { CalendarDays, Clock3, MapPin, Ticket } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { CalendarDays, Clock3, Eye, EyeOff, MapPin, Ticket } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import bookingConfirmationMock from "../../mocks/bookingMocks";
 import useBookingHistory from "../hooks/useBookingHistory";
@@ -142,7 +142,32 @@ function resolveBookingStatus(booking, showTimestamp, nowTimestamp) {
 	return BOOKING_STATUS.CONFIRMED;
 }
 
-function BookingListCard({ booking, onOpenTicket }) {
+function formatBookedAt(value) {
+	if (!value) {
+		return "Not available";
+	}
+
+	const parsedDate = new Date(value);
+	if (Number.isNaN(parsedDate.getTime())) {
+		return String(value);
+	}
+
+	return parsedDate.toLocaleString("en-US", {
+		weekday: "short",
+		month: "short",
+		day: "2-digit",
+		year: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+}
+
+function BookingListCard({
+	booking,
+	isPreviewOpen,
+	onOpenTicket,
+	onTogglePreview,
+}) {
 	const seatAssignments = Array.isArray(booking.seats)
 		? booking.seats.join(", ")
 		: "Seats TBA";
@@ -201,7 +226,21 @@ function BookingListCard({ booking, onOpenTicket }) {
 					</div>
 				</div>
 
-				<div className="md:justify-self-end">
+				<div className="grid gap-2 md:justify-self-end">
+					<button
+						type="button"
+						onClick={onTogglePreview}
+						aria-expanded={isPreviewOpen}
+						className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-cyan-300/35 bg-cyan-500/10 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-cyan-100 transition hover:bg-cyan-500/20 md:w-auto"
+					>
+						{isPreviewOpen ? (
+							<EyeOff className="h-3.5 w-3.5" />
+						) : (
+							<Eye className="h-3.5 w-3.5" />
+						)}
+						{isPreviewOpen ? "Hide Preview" : "Preview Details"}
+					</button>
+
 					<button
 						type="button"
 						onClick={onOpenTicket}
@@ -211,6 +250,51 @@ function BookingListCard({ booking, onOpenTicket }) {
 					</button>
 				</div>
 			</div>
+
+			{isPreviewOpen ? (
+				<div className="border-t border-white/10 bg-black/25 px-4 py-4 sm:px-5">
+					<div className="grid gap-3 text-sm text-zinc-200 sm:grid-cols-2">
+						<div>
+							<p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+								Booking Reference
+							</p>
+							<p className="mt-1 font-semibold text-white">{booking.bookingId}</p>
+						</div>
+
+						<div>
+							<p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+								Booked On
+							</p>
+							<p className="mt-1 font-semibold text-white">
+								{formatBookedAt(booking.createdAt)}
+							</p>
+						</div>
+
+						<div>
+							<p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+								Theater Address
+							</p>
+							<p className="mt-1 text-zinc-100">{booking.theaterAddress}</p>
+						</div>
+
+						<div>
+							<p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+								Status
+							</p>
+							<p className="mt-1 text-zinc-100">{statusStyle.label}</p>
+						</div>
+
+						<div className="sm:col-span-2">
+							<p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+								Check-In QR Value
+							</p>
+							<p className="mt-1 line-clamp-2 break-all text-zinc-100/90">
+								{booking.qrValue}
+							</p>
+						</div>
+					</div>
+				</div>
+			) : null}
 		</article>
 	);
 }
@@ -221,6 +305,8 @@ function BookingSection({
 	bookings,
 	emptyMessage,
 	onOpenTicket,
+	previewBookingId,
+	onTogglePreview,
 }) {
 	return (
 		<section className="rounded-2xl border border-white/10 bg-white/2 p-4 sm:p-5">
@@ -243,7 +329,9 @@ function BookingSection({
 						<BookingListCard
 							key={`${title}-${booking.bookingId}`}
 							booking={booking}
+							isPreviewOpen={previewBookingId === booking.bookingId}
 							onOpenTicket={() => onOpenTicket(booking)}
+							onTogglePreview={() => onTogglePreview(booking.bookingId)}
 						/>
 					))}
 				</div>
@@ -259,6 +347,7 @@ function BookingSection({
 function MyBookingsPage() {
 	const navigate = useNavigate();
 	const { bookingHistory } = useBookingHistory();
+	const [previewBookingId, setPreviewBookingId] = useState(null);
 
 	const validHistoryRecords = useMemo(
 		() => bookingHistory.filter(hasValidBookingRecord),
@@ -354,6 +443,12 @@ function MyBookingsPage() {
 		});
 	};
 
+	const handleTogglePreview = (bookingId) => {
+		setPreviewBookingId((currentBookingId) =>
+			currentBookingId === bookingId ? null : bookingId
+		);
+	};
+
 	return (
 		<main className="min-h-screen bg-black px-4 pb-10 pt-24 sm:px-6 lg:px-10">
 			<section className="mx-auto max-w-6xl">
@@ -382,6 +477,8 @@ function MyBookingsPage() {
 						bookings={upcomingBookings}
 						emptyMessage="No upcoming bookings yet."
 						onOpenTicket={handleOpenTicket}
+						previewBookingId={previewBookingId}
+						onTogglePreview={handleTogglePreview}
 					/>
 
 					<BookingSection
@@ -390,6 +487,8 @@ function MyBookingsPage() {
 						bookings={pastBookings}
 						emptyMessage="No past bookings to show yet."
 						onOpenTicket={handleOpenTicket}
+						previewBookingId={previewBookingId}
+						onTogglePreview={handleTogglePreview}
 					/>
 				</div>
 			</section>

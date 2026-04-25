@@ -70,7 +70,7 @@ function Navbar() {
           />
           <MagneticLink>
             <Link
-              to={myBookingsPath}
+              to="/"
               onClick={() => {
                 scrollTo(0, 0);
                 setIsOpen(false);
@@ -92,7 +92,7 @@ function Navbar() {
           </MagneticLink>
           <MagneticLink>
             <Link
-              to="/"
+              to={myBookingsPath}
               onClick={() => {
                 scrollTo(0, 0);
                 setIsOpen(false);
