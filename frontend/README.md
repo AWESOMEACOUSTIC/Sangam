@@ -236,7 +236,7 @@ backend/
 ### G. Frontend Quality and Testing
 
 - [x] Add unit tests for auth gate and redirect logic.
-- [ ] Add unit tests for pricing calculations.
+- [x] Add unit tests for pricing calculations.
 - [ ] Add integration test for end-to-end frontend happy path.
 - [ ] Add integration test for logged-out deep-link access path.
 - [ ] Run lint and resolve booking-related warnings and errors.
