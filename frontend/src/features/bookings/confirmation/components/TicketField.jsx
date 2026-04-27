@@ -6,6 +6,10 @@ export default function TicketField({
   value,
   className = "",
 }) {
+  const iconElement = Icon
+    ? React.createElement(Icon, { className: "h-3.5 w-3.5" })
+    : null;
+
   return (
     <div
       className={[
@@ -15,7 +19,7 @@ export default function TicketField({
       ].join(" ")}
     >
       <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-black/55">
-        <Icon className="h-3.5 w-3.5" />
+        {iconElement}
         <span>{label}</span>
       </div>
 

@@ -20,9 +20,15 @@ function BookingSummary({ selectedSeats, pricing, hoveredSeat, onProceedToChecko
   const [showValidationFeedback, setShowValidationFeedback] = useState(false);
 
   useEffect(() => {
-    if (isSummaryValid) {
+    if (!isSummaryValid) return;
+
+    const timeoutId = setTimeout(() => {
       setShowValidationFeedback(false);
-    }
+    }, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [isSummaryValid]);
 
   const handleProceed = () => {
