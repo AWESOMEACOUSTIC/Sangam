@@ -238,7 +238,7 @@ backend/
 - [x] Add unit tests for auth gate and redirect logic.
 - [x] Add unit tests for pricing calculations.
 - [x] Add integration test for end-to-end frontend happy path.
-- [ ] Add integration test for logged-out deep-link access path.
+- [x] Add integration test for logged-out deep-link access path.
 - [ ] Run lint and resolve booking-related warnings and errors.
 
 ## Frontend Done Criteria
