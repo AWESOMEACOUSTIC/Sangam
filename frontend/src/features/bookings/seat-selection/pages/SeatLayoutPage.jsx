@@ -46,7 +46,11 @@ function SeatLayoutPage() {
       return;
     }
 
-    const bookingSessionId = `${showId || "show"}-${Date.now().toString(36)}`;
+    const seatSignature = selectedSeats
+      .map((seat) => `${seat.rowNumber}-${seat.seatNumber}`)
+      .sort()
+      .join("_");
+    const bookingSessionId = `${showId || "show"}-${seatSignature || "session"}`;
 
     navigate(buildCheckoutPath({ bookingSessionId }), {
       state: {

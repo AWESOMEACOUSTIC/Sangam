@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { getShowtimeOptions } from "../../mocks/showtimeMocks";
 
 function formatDateLabel(dateString) {
@@ -23,11 +23,19 @@ export default function useShowtimeSelection(movieId) {
 		}));
 	}, [movieId]);
 
-	const [selectedShowtimeId, setSelectedShowtimeId] = useState("");
+	const [manualSelectedShowtimeId, setManualSelectedShowtimeId] = useState("");
 
-	useEffect(() => {
-		setSelectedShowtimeId(showtimes[0]?.id ?? "");
-	}, [showtimes]);
+	const selectedShowtimeId = useMemo(() => {
+		const hasManualSelection = showtimes.some(
+			(showtime) => showtime.id === manualSelectedShowtimeId
+		);
+
+		if (hasManualSelection) {
+			return manualSelectedShowtimeId;
+		}
+
+		return showtimes[0]?.id ?? "";
+	}, [manualSelectedShowtimeId, showtimes]);
 
 	const selectedShowtime = useMemo(() => {
 		return showtimes.find((showtime) => showtime.id === selectedShowtimeId) ?? null;
@@ -37,6 +45,6 @@ export default function useShowtimeSelection(movieId) {
 		showtimes,
 		selectedShowtime,
 		selectedShowtimeId,
-		setSelectedShowtimeId,
+		setSelectedShowtimeId: setManualSelectedShowtimeId,
 	};
 }

@@ -68,6 +68,8 @@ const MOCK_BOOKING_RECORDS = [
 	},
 ];
 
+const BOOKING_REFERENCE_TIMESTAMP = Date.now();
+
 function normalizeBookingStatus(status) {
 	const normalizedValue = String(status || "")
 		.trim()
@@ -368,7 +370,7 @@ function MyBookingsPage() {
 	}, [validHistoryRecords]);
 
 	const { upcomingBookings, pastBookings } = useMemo(() => {
-		const nowTimestamp = Date.now();
+		const nowTimestamp = BOOKING_REFERENCE_TIMESTAMP;
 		const upcoming = [];
 		const past = [];
 
