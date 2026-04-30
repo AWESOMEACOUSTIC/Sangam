@@ -243,79 +243,10 @@ backend/
 
 ## Frontend Done Criteria
 
-- [ ] User can complete movie detail to seat to checkout to confirmation flow using mock services.
-- [ ] Login redirection works in all protected booking routes.
+- [x] User can complete movie detail to seat to checkout to confirmation flow using mock services.
+- [x] Login redirection works in all protected booking routes.
 - [ ] No broken navigation paths remain in booking journey.
-- [ ] Frontend tests pass for critical booking flows.
+- [x] Frontend tests pass for critical booking flows.
 
 ---
 
-## Tracker 2: Backend Integration Checklist
-
-### H. API Contract Finalization
-
-- [ ] Define request and response contracts for showtime listing.
-- [ ] Define request and response contracts for seat map retrieval.
-- [ ] Define request and response contracts for hold seats API.
-- [ ] Define request and response contracts for checkout and booking confirmation API.
-- [ ] Define request and response contracts for my bookings and booking detail APIs.
-
-### I. Auth and Authorization
-
-- [ ] Verify user identity on protected booking endpoints.
-- [ ] Enforce ownership checks for my bookings endpoints.
-- [ ] Reject unauthorized access with consistent error format.
-
-### J. Seat Hold and Concurrency
-
-- [ ] Implement seat hold creation with expiry.
-- [ ] Implement hold release on timeout.
-- [ ] Revalidate seat availability before booking confirmation.
-- [ ] Prevent double booking under concurrent requests.
-- [ ] Return conflict-safe responses for already booked seats.
-
-### K. Pricing and Booking Core Logic
-
-- [ ] Move price calculation source of truth to backend.
-- [ ] Store and return fare breakdown with taxes and fees.
-- [ ] Persist booking session and confirmed booking entities.
-- [ ] Generate deterministic booking reference IDs.
-
-### L. Payment and Confirmation
-
-- [ ] Integrate payment intent creation.
-- [ ] Verify payment status before confirming booking.
-- [ ] Handle failed payment and rollback hold state.
-- [ ] Return canonical confirmation payload for frontend ticket UI.
-
-### M. My Bookings and History APIs
-
-- [ ] Implement user booking list endpoint with pagination.
-- [ ] Implement booking detail endpoint.
-- [ ] Return normalized booking status timeline.
-
-### N. Reliability and Production Hardening
-
-- [ ] Add schema validation for all booking inputs.
-- [ ] Add idempotency protection for booking confirmation API.
-- [ ] Add rate limiting for booking-sensitive endpoints.
-- [ ] Add structured logs for hold, payment, and confirmation events.
-- [ ] Add monitoring metrics for booking success, failure, and drop-off.
-
-## Backend Done Criteria
-
-- [ ] Seat locking is concurrency safe.
-- [ ] Pricing is backend authoritative.
-- [ ] Confirmed bookings are persistent and queryable.
-- [ ] Payment and booking state remain consistent under failures.
-- [ ] Frontend can switch from mock services to real APIs without route or UX redesign.
-
----
-
-## Final Release Checklist
-
-- [ ] Frontend tracker complete.
-- [ ] Backend tracker complete.
-- [ ] End-to-end manual test pass on full journey.
-- [ ] Basic monitoring and error handling in place.
-- [ ] Deployment notes updated for both frontend and backend.
