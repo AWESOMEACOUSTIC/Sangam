@@ -1,0 +1,974 @@
+openapi: 3.0.3
+info:
+	title: Sangam API
+	version: 1.0.0
+	description: API contract for Sangam backend v1 endpoints.
+servers:
+	- url: http://localhost:4000/api/v1
+		description: Local development
+tags:
+	- name: meta
+		description: Service metadata
+	- name: health
+		description: Health and readiness checks
+	- name: showtimes
+		description: Movie showtime discovery
+	- name: seats
+		description: Seat maps and availability
+	- name: holds
+		description: Seat holds
+	- name: checkout
+		description: Checkout session management
+	- name: payments
+		description: Payment confirmation
+	- name: bookings
+		description: Booking history and details
+	- name: users
+		description: Authenticated user profile
+
+paths:
+	/:
+		get:
+			tags:
+				- meta
+			summary: API status
+			responses:
+				"200":
+					description: API status response.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/StatusResponse"
+
+	/health:
+		get:
+			tags:
+				- health
+			summary: Health check
+			responses:
+				"200":
+					description: Service is healthy.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/HealthResponse"
+
+	/ready:
+		get:
+			tags:
+				- health
+			summary: Readiness check
+			responses:
+				"200":
+					description: Service is ready to receive traffic.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/ReadinessResponse"
+
+	/showtimes:
+		get:
+			tags:
+				- showtimes
+			summary: List showtimes by movie and date range
+			parameters:
+				- in: query
+					name: movieId
+					schema:
+						type: string
+					required: true
+					description: Movie identifier.
+				- in: query
+					name: startDate
+					schema:
+						type: string
+						format: date
+					required: true
+					description: Inclusive start date.
+				- in: query
+					name: endDate
+					schema:
+						type: string
+						format: date
+					required: true
+					description: Inclusive end date.
+				- in: query
+					name: theaterId
+					schema:
+						type: string
+					required: false
+					description: Optional theater filter.
+			responses:
+				"200":
+					description: List of showtimes.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/ShowtimeListResponse"
+				"400":
+					$ref: "#/components/responses/BadRequest"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/showtimes/{showId}/seats:
+		get:
+			tags:
+				- seats
+			summary: Get seat map and pricing for a showtime
+			parameters:
+				- in: path
+					name: showId
+					required: true
+					schema:
+						type: string
+			responses:
+				"200":
+					description: Seat map with availability and pricing.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/SeatMapResponse"
+				"404":
+					$ref: "#/components/responses/NotFound"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/holds:
+		post:
+			tags:
+				- holds
+			summary: Create a seat hold
+			security:
+				- bearerAuth: []
+			requestBody:
+				required: true
+				content:
+					application/json:
+						schema:
+							$ref: "#/components/schemas/HoldCreateRequest"
+			responses:
+				"201":
+					description: Seat hold created.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/HoldResponse"
+				"400":
+					$ref: "#/components/responses/BadRequest"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"409":
+					$ref: "#/components/responses/Conflict"
+				"429":
+					$ref: "#/components/responses/TooManyRequests"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/checkout/sessions:
+		post:
+			tags:
+				- checkout
+			summary: Create a checkout session from a hold
+			security:
+				- bearerAuth: []
+			requestBody:
+				required: true
+				content:
+					application/json:
+						schema:
+							$ref: "#/components/schemas/CheckoutSessionCreateRequest"
+			responses:
+				"201":
+					description: Checkout session created.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/CheckoutSessionResponse"
+				"400":
+					$ref: "#/components/responses/BadRequest"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"404":
+					$ref: "#/components/responses/NotFound"
+				"409":
+					$ref: "#/components/responses/Conflict"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/checkout/sessions/{sessionId}:
+		get:
+			tags:
+				- checkout
+			summary: Get a checkout session
+			security:
+				- bearerAuth: []
+			parameters:
+				- in: path
+					name: sessionId
+					required: true
+					schema:
+						type: string
+			responses:
+				"200":
+					description: Checkout session details.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/CheckoutSessionResponse"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"404":
+					$ref: "#/components/responses/NotFound"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/payments/confirm:
+		post:
+			tags:
+				- payments
+			summary: Confirm payment and create booking
+			security:
+				- bearerAuth: []
+			requestBody:
+				required: true
+				content:
+					application/json:
+						schema:
+							$ref: "#/components/schemas/PaymentConfirmRequest"
+			responses:
+				"200":
+					description: Payment confirmed and booking created.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/PaymentConfirmationResponse"
+				"400":
+					$ref: "#/components/responses/BadRequest"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"409":
+					$ref: "#/components/responses/Conflict"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/bookings:
+		get:
+			tags:
+				- bookings
+			summary: List bookings for the current user
+			security:
+				- bearerAuth: []
+			parameters:
+				- in: query
+					name: limit
+					schema:
+						type: integer
+						minimum: 1
+						maximum: 50
+						default: 10
+				- in: query
+					name: cursor
+					schema:
+						type: string
+					description: Pagination cursor for the next page.
+			responses:
+				"200":
+					description: Booking list.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/BookingListResponse"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/bookings/{bookingId}:
+		get:
+			tags:
+				- bookings
+			summary: Get booking details
+			security:
+				- bearerAuth: []
+			parameters:
+				- in: path
+					name: bookingId
+					required: true
+					schema:
+						type: string
+			responses:
+				"200":
+					description: Booking details.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/BookingDetailResponse"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"404":
+					$ref: "#/components/responses/NotFound"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+	/users/me:
+		get:
+			tags:
+				- users
+			summary: Get the current user profile
+			security:
+				- bearerAuth: []
+			responses:
+				"200":
+					description: User profile.
+					headers:
+						X-Request-Id:
+							$ref: "#/components/headers/X-Request-Id"
+					content:
+						application/json:
+							schema:
+								$ref: "#/components/schemas/UserProfileResponse"
+				"401":
+					$ref: "#/components/responses/Unauthorized"
+				"500":
+					$ref: "#/components/responses/ServerError"
+
+components:
+	securitySchemes:
+		bearerAuth:
+			type: http
+			scheme: bearer
+			bearerFormat: JWT
+	headers:
+		X-Request-Id:
+			description: Correlation id for this request.
+			schema:
+				type: string
+	responses:
+		BadRequest:
+			description: Bad request.
+			headers:
+				X-Request-Id:
+					$ref: "#/components/headers/X-Request-Id"
+			content:
+				application/json:
+					schema:
+						$ref: "#/components/schemas/ErrorResponse"
+		Unauthorized:
+			description: Authentication required.
+			headers:
+				X-Request-Id:
+					$ref: "#/components/headers/X-Request-Id"
+			content:
+				application/json:
+					schema:
+						$ref: "#/components/schemas/ErrorResponse"
+		NotFound:
+			description: Resource not found.
+			headers:
+				X-Request-Id:
+					$ref: "#/components/headers/X-Request-Id"
+			content:
+				application/json:
+					schema:
+						$ref: "#/components/schemas/ErrorResponse"
+		Conflict:
+			description: Conflict with current resource state.
+			headers:
+				X-Request-Id:
+					$ref: "#/components/headers/X-Request-Id"
+			content:
+				application/json:
+					schema:
+						$ref: "#/components/schemas/ErrorResponse"
+		TooManyRequests:
+			description: Rate limit exceeded.
+			headers:
+				X-Request-Id:
+					$ref: "#/components/headers/X-Request-Id"
+			content:
+				application/json:
+					schema:
+						$ref: "#/components/schemas/ErrorResponse"
+		ServerError:
+			description: Internal server error.
+			headers:
+				X-Request-Id:
+					$ref: "#/components/headers/X-Request-Id"
+			content:
+				application/json:
+					schema:
+						$ref: "#/components/schemas/ErrorResponse"
+	schemas:
+		StatusResponse:
+			type: object
+			required:
+				- status
+				- version
+			properties:
+				status:
+					type: string
+					example: ok
+				version:
+					type: string
+					example: v1
+		HealthResponse:
+			type: object
+			required:
+				- status
+			properties:
+				status:
+					type: string
+					example: ok
+				timestamp:
+					type: string
+					format: date-time
+		ReadinessResponse:
+			type: object
+			required:
+				- status
+			properties:
+				status:
+					type: string
+					example: ok
+				checks:
+					type: array
+					items:
+						$ref: "#/components/schemas/ReadinessCheck"
+		ReadinessCheck:
+			type: object
+			required:
+				- name
+				- status
+			properties:
+				name:
+					type: string
+					example: database
+				status:
+					type: string
+					example: ok
+				message:
+					type: string
+		ErrorResponse:
+			type: object
+			required:
+				- code
+				- message
+				- requestId
+			properties:
+				code:
+					type: string
+					example: invalid_request
+				message:
+					type: string
+					example: Missing required field.
+				requestId:
+					type: string
+				details:
+					type: array
+					items:
+						$ref: "#/components/schemas/ErrorDetail"
+		ErrorDetail:
+			type: object
+			required:
+				- message
+			properties:
+				field:
+					type: string
+				message:
+					type: string
+		MovieSummary:
+			type: object
+			required:
+				- movieId
+				- title
+			properties:
+				movieId:
+					type: string
+				title:
+					type: string
+				runtimeMinutes:
+					type: integer
+				rating:
+					type: string
+				posterUrl:
+					type: string
+					format: uri
+		TheaterSummary:
+			type: object
+			required:
+				- theaterId
+				- name
+			properties:
+				theaterId:
+					type: string
+				name:
+					type: string
+				addressLine1:
+					type: string
+				city:
+					type: string
+				state:
+					type: string
+				postalCode:
+					type: string
+		AuditoriumSummary:
+			type: object
+			required:
+				- auditoriumId
+				- name
+			properties:
+				auditoriumId:
+					type: string
+				name:
+					type: string
+		Showtime:
+			type: object
+			required:
+				- showId
+				- movie
+				- theater
+				- auditorium
+				- startsAt
+			properties:
+				showId:
+					type: string
+				movie:
+					$ref: "#/components/schemas/MovieSummary"
+				theater:
+					$ref: "#/components/schemas/TheaterSummary"
+				auditorium:
+					$ref: "#/components/schemas/AuditoriumSummary"
+				startsAt:
+					type: string
+					format: date-time
+				endsAt:
+					type: string
+					format: date-time
+		ShowtimeListResponse:
+			type: object
+			required:
+				- items
+			properties:
+				items:
+					type: array
+					items:
+						$ref: "#/components/schemas/Showtime"
+		SeatStatus:
+			type: string
+			enum:
+				- available
+				- reserved
+				- sold
+				- blocked
+		Seat:
+			type: object
+			required:
+				- seatId
+				- rowNumber
+				- seatNumber
+				- seatLabel
+				- seatClassKey
+				- seatClassLabel
+				- status
+				- price
+			properties:
+				seatId:
+					type: string
+				rowNumber:
+					type: integer
+				seatNumber:
+					type: integer
+				rowLabel:
+					type: string
+				seatLabel:
+					type: string
+				seatClassKey:
+					type: string
+				seatClassLabel:
+					type: string
+				status:
+					$ref: "#/components/schemas/SeatStatus"
+				price:
+					type: number
+					format: float
+		SeatMapResponse:
+			type: object
+			required:
+				- showId
+				- seats
+				- currency
+			properties:
+				showId:
+					type: string
+				currency:
+					type: string
+					example: USD
+				seats:
+					type: array
+					items:
+						$ref: "#/components/schemas/Seat"
+		HoldStatus:
+			type: string
+			enum:
+				- active
+				- expired
+				- released
+		HoldCreateRequest:
+			type: object
+			required:
+				- showId
+				- seatIds
+			properties:
+				showId:
+					type: string
+				seatIds:
+					type: array
+					items:
+						type: string
+					minItems: 1
+					maxItems: 6
+				clientReference:
+					type: string
+		HoldResponse:
+			type: object
+			required:
+				- holdId
+				- showId
+				- seatIds
+				- status
+				- holdExpiresAt
+			properties:
+				holdId:
+					type: string
+				showId:
+					type: string
+				seatIds:
+					type: array
+					items:
+						type: string
+				status:
+					$ref: "#/components/schemas/HoldStatus"
+				holdExpiresAt:
+					type: string
+					format: date-time
+				createdAt:
+					type: string
+					format: date-time
+				maxSeats:
+					type: integer
+					example: 6
+		CheckoutSessionStatus:
+			type: string
+			enum:
+				- pending_payment
+				- expired
+				- completed
+		PaymentMethod:
+			type: string
+			enum:
+				- UPI
+				- Card
+				- NetBanking
+				- Wallet
+		NormalizedSeat:
+			type: object
+			required:
+				- seatId
+				- rowNumber
+				- seatNumber
+				- seatLabel
+				- seatClassKey
+				- seatClassLabel
+				- price
+			properties:
+				seatId:
+					type: string
+				rowNumber:
+					type: integer
+				seatNumber:
+					type: integer
+				seatLabel:
+					type: string
+				seatClassKey:
+					type: string
+				seatClassLabel:
+					type: string
+				price:
+					type: number
+					format: float
+		PricingSnapshot:
+			type: object
+			required:
+				- seatCount
+				- subtotal
+				- convenienceFee
+				- orderProcessingFee
+				- taxAmount
+				- totalPrice
+				- currency
+			properties:
+				seatCount:
+					type: integer
+				subtotal:
+					type: number
+					format: float
+				convenienceFee:
+					type: number
+					format: float
+				orderProcessingFee:
+					type: number
+					format: float
+				taxAmount:
+					type: number
+					format: float
+				totalPrice:
+					type: number
+					format: float
+				currency:
+					type: string
+					example: USD
+		CheckoutSessionCreateRequest:
+			type: object
+			required:
+				- holdId
+			properties:
+				holdId:
+					type: string
+		CheckoutSessionResponse:
+			type: object
+			required:
+				- sessionId
+				- holdId
+				- showId
+				- status
+				- holdExpiresAt
+				- paymentMethods
+				- seats
+				- pricing
+			properties:
+				sessionId:
+					type: string
+				holdId:
+					type: string
+				showId:
+					type: string
+				status:
+					$ref: "#/components/schemas/CheckoutSessionStatus"
+				holdExpiresAt:
+					type: string
+					format: date-time
+				movieTitle:
+					type: string
+				posterUrl:
+					type: string
+					format: uri
+				showDate:
+					type: string
+				showTime:
+					type: string
+				theaterName:
+					type: string
+				theaterAddress:
+					type: string
+				auditorium:
+					type: string
+				paymentMethods:
+					type: array
+					items:
+						$ref: "#/components/schemas/PaymentMethod"
+				seats:
+					type: array
+					items:
+						$ref: "#/components/schemas/NormalizedSeat"
+				pricing:
+					$ref: "#/components/schemas/PricingSnapshot"
+		PaymentConfirmRequest:
+			type: object
+			required:
+				- sessionId
+				- paymentMethod
+			properties:
+				sessionId:
+					type: string
+				paymentMethod:
+					$ref: "#/components/schemas/PaymentMethod"
+				paymentReference:
+					type: string
+		PaymentConfirmationResponse:
+			type: object
+			required:
+				- bookingId
+				- bookingStatus
+				- qrValue
+				- theaterName
+				- theaterAddress
+				- showDate
+				- showTime
+				- seats
+			properties:
+				bookingId:
+					type: string
+				bookingStatus:
+					$ref: "#/components/schemas/BookingStatus"
+				qrValue:
+					type: string
+				theaterName:
+					type: string
+				theaterAddress:
+					type: string
+				showDate:
+					type: string
+				showTime:
+					type: string
+				auditorium:
+					type: string
+				seats:
+					type: array
+					items:
+						type: string
+		BookingStatus:
+			type: string
+			enum:
+				- pending_payment
+				- confirmed
+				- cancelled
+				- expired
+				- refunded
+		BookingSummary:
+			type: object
+			required:
+				- bookingId
+				- bookingStatus
+				- createdAt
+				- movieTitle
+				- showDate
+				- showTime
+				- theaterName
+			properties:
+				bookingId:
+					type: string
+				bookingStatus:
+					$ref: "#/components/schemas/BookingStatus"
+				createdAt:
+					type: string
+					format: date-time
+				movieTitle:
+					type: string
+				showDate:
+					type: string
+				showTime:
+					type: string
+				theaterName:
+					type: string
+				seatLabels:
+					type: array
+					items:
+						type: string
+				totalPrice:
+					type: number
+					format: float
+				currency:
+					type: string
+		BookingListResponse:
+			type: object
+			required:
+				- items
+			properties:
+				items:
+					type: array
+					items:
+						$ref: "#/components/schemas/BookingSummary"
+				nextCursor:
+					type: string
+					nullable: true
+		BookingDetail:
+			type: object
+			required:
+				- bookingId
+				- bookingStatus
+				- createdAt
+				- showId
+				- seats
+				- pricing
+			properties:
+				bookingId:
+					type: string
+				bookingStatus:
+					$ref: "#/components/schemas/BookingStatus"
+				createdAt:
+					type: string
+					format: date-time
+				showId:
+					type: string
+				movieTitle:
+					type: string
+				showDate:
+					type: string
+				showTime:
+					type: string
+				theaterName:
+					type: string
+				theaterAddress:
+					type: string
+				auditorium:
+					type: string
+				seats:
+					type: array
+					items:
+						$ref: "#/components/schemas/NormalizedSeat"
+				pricing:
+					$ref: "#/components/schemas/PricingSnapshot"
+				paymentReference:
+					type: string
+		BookingDetailResponse:
+			type: object
+			required:
+				- booking
+			properties:
+				booking:
+					$ref: "#/components/schemas/BookingDetail"
+		UserProfileResponse:
+			type: object
+			required:
+				- userId
+			properties:
+				userId:
+					type: string
+				email:
+					type: string
+					format: email
+				name:
+					type: string
